@@ -4,8 +4,18 @@ import {
   Theme,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+  useFonts,
+} from '@expo-google-fonts/inter';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import i18n from './src/i18n';
@@ -25,7 +35,7 @@ import { SelectMuscleGroupsScreen } from './src/screens/SelectMuscleGroupsScreen
 import { SelectStartModeScreen } from './src/screens/SelectStartModeScreen';
 import { SessionDetailScreen } from './src/screens/SessionDetailScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
-import { colors } from './src/theme';
+import { colors, fontFamily } from './src/theme';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -43,12 +53,24 @@ const navTheme: Theme = {
 };
 
 export default function App() {
+  const { t } = useTranslation();
   const language = useProfileStore((s) => s.language);
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
+  });
   useEffect(() => {
     if (i18n.language !== language) {
       i18n.changeLanguage(language);
     }
   }, [language]);
+
+  if (!fontsLoaded) {
+    return <View style={{ flex: 1, backgroundColor: colors.bg }} />;
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -59,7 +81,11 @@ export default function App() {
             initialRouteName="Home"
             screenOptions={{
               headerStyle: { backgroundColor: colors.bg },
-              headerTitleStyle: { color: colors.text, fontWeight: '700' },
+              headerTitleStyle: {
+                color: colors.text,
+                fontFamily: fontFamily.bold,
+                fontSize: 17,
+              },
               headerTintColor: colors.primary,
               contentStyle: { backgroundColor: colors.bg },
             }}
@@ -72,67 +98,67 @@ export default function App() {
             <Stack.Screen
               name="SelectStartMode"
               component={SelectStartModeScreen}
-              options={{ title: 'New training' }}
+              options={{ title: t('nav.newTraining') }}
             />
             <Stack.Screen
               name="RoutineList"
               component={RoutineListScreen}
-              options={{ title: 'Routines' }}
+              options={{ title: t('nav.routines') }}
             />
             <Stack.Screen
               name="SelectMuscleGroups"
               component={SelectMuscleGroupsScreen}
-              options={{ title: 'Muscle groups' }}
+              options={{ title: t('nav.muscleGroups') }}
             />
             <Stack.Screen
               name="SelectExercises"
               component={SelectExercisesScreen}
-              options={{ title: 'Exercises' }}
+              options={{ title: t('nav.exercises') }}
             />
             <Stack.Screen
               name="ConfigureExercises"
               component={ConfigureExercisesScreen}
-              options={{ title: 'Configure' }}
+              options={{ title: t('nav.configure') }}
             />
             <Stack.Screen
               name="ActiveWorkout"
               component={ActiveWorkoutScreen}
-              options={{ title: 'Training', headerBackVisible: false }}
+              options={{ title: t('nav.training'), headerBackVisible: false }}
             />
             <Stack.Screen
               name="AddExerciseToSession"
               component={AddExerciseToSessionScreen}
-              options={{ title: 'Add exercise', presentation: 'modal' }}
+              options={{ title: t('nav.addExercise'), presentation: 'modal' }}
             />
             <Stack.Screen
               name="Dashboard"
               component={DashboardScreen}
-              options={{ title: 'Stats' }}
+              options={{ title: t('nav.stats') }}
             />
             <Stack.Screen
               name="History"
               component={HistoryScreen}
-              options={{ title: 'History' }}
+              options={{ title: t('nav.history') }}
             />
             <Stack.Screen
               name="SessionDetail"
               component={SessionDetailScreen}
-              options={{ title: 'Session' }}
+              options={{ title: t('nav.session') }}
             />
             <Stack.Screen
               name="ExerciseList"
               component={ExerciseListScreen}
-              options={{ title: 'Exercises' }}
+              options={{ title: t('nav.exercises') }}
             />
             <Stack.Screen
               name="ExerciseDetail"
               component={ExerciseDetailScreen}
-              options={{ title: 'Progression' }}
+              options={{ title: t('nav.progression') }}
             />
             <Stack.Screen
               name="Settings"
               component={SettingsScreen}
-              options={{ title: 'Settings' }}
+              options={{ title: t('nav.settings') }}
             />
           </Stack.Navigator>
         </NavigationContainer>

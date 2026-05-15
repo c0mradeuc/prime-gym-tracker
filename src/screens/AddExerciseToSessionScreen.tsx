@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NumberStepper } from '../components/NumberStepper';
@@ -18,6 +19,7 @@ import { equipmentIncrement, suggestWeight } from '../utils/weight';
 type Props = NativeStackScreenProps<RootStackParamList, 'AddExerciseToSession'>;
 
 export const AddExerciseToSessionScreen: React.FC<Props> = ({ navigation }) => {
+  const { t } = useTranslation();
   const history = useHistoryStore((s) => s.sessions);
   const addExercise = useWorkoutStore((s) => s.addExercise);
   const session = useWorkoutStore((s) => s.current);
@@ -50,10 +52,10 @@ export const AddExerciseToSessionScreen: React.FC<Props> = ({ navigation }) => {
     return (
       <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Text style={styles.title}>{ex.name}</Text>
-          <Text style={styles.subtitle}>Configure and add to session.</Text>
+          <Text style={styles.title}>{t(`exercise.${ex.id}`)}</Text>
+          <Text style={styles.subtitle}>{t('builder.configureAndAdd')}</Text>
 
-          <Text style={styles.sectionLabel}>Scheme</Text>
+          <Text style={styles.sectionLabel}>{t('builder.scheme')}</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -78,7 +80,7 @@ export const AddExerciseToSessionScreen: React.FC<Props> = ({ navigation }) => {
                     },
                   ]}
                 >
-                  <Text style={styles.schemeLabel}>{s.label}</Text>
+                  <Text style={styles.schemeLabel}>{t(`scheme.${s.labelKey}`)}</Text>
                   <Text style={styles.schemeSub}>
                     {s.sets} × {s.reps}
                   </Text>
@@ -87,7 +89,7 @@ export const AddExerciseToSessionScreen: React.FC<Props> = ({ navigation }) => {
             })}
           </ScrollView>
 
-          <Text style={styles.sectionLabel}>Weight</Text>
+          <Text style={styles.sectionLabel}>{t('builder.weight')}</Text>
           <NumberStepper
             value={weight}
             onChange={setWeight}
@@ -98,12 +100,12 @@ export const AddExerciseToSessionScreen: React.FC<Props> = ({ navigation }) => {
         </ScrollView>
         <View style={styles.footer}>
           <PrimaryButton
-            label="Cancel"
+            label={t('builder.cancel')}
             variant="secondary"
             onPress={() => setPickedId(null)}
             style={{ marginBottom: spacing.sm }}
           />
-          <PrimaryButton label="Add to session" variant="success" onPress={onConfirm} />
+          <PrimaryButton label={t('builder.addToSession')} variant="success" onPress={onConfirm} />
         </View>
       </SafeAreaView>
     );
@@ -112,14 +114,14 @@ export const AddExerciseToSessionScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.title}>Add exercise</Text>
-        <Text style={styles.subtitle}>Pick from any muscle group.</Text>
+        <Text style={styles.title}>{t('builder.addTitle')}</Text>
+        <Text style={styles.subtitle}>{t('builder.addSubtitle')}</Text>
         {MUSCLE_GROUPS.map((mg) => {
           const list = EXERCISES.filter((e) => e.muscleGroup === mg.id);
           return (
             <View key={mg.id} style={styles.section}>
               <Text style={styles.sectionTitle}>
-                {mg.emoji} {mg.name}
+                {mg.emoji} {t(`muscle.${mg.id}`)}
               </Text>
               {list.map((ex) => {
                 const inSession = alreadyIn.has(ex.id);
@@ -133,9 +135,9 @@ export const AddExerciseToSessionScreen: React.FC<Props> = ({ navigation }) => {
                       { opacity: inSession ? 0.4 : 1 },
                     ]}
                   >
-                    <Text style={styles.exName}>{ex.name}</Text>
+                    <Text style={styles.exName}>{t(`exercise.${ex.id}`)}</Text>
                     <Text style={styles.exMeta}>
-                      {inSession ? 'Already added' : ex.equipment}
+                      {inSession ? t('builder.alreadyAdded') : t(`equipment.${ex.equipment}`)}
                     </Text>
                   </Pressable>
                 );

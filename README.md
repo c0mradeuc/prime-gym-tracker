@@ -26,7 +26,8 @@ Design constraints that shape the codebase:
 - **Smart weight suggestions** — defaults to your last-used weight, falling back to a bodyweight-ratio estimate from the exercise catalog.
 - **Stats & PRs** — Epley 1RM progression per exercise, plus automatic PR detection across three axes (weight, single-set volume, reps-at-or-above-weight).
 - **History** — full session history with per-session detail view.
-- **Profile settings** — name, age, and bodyweight; bodyweight feeds the cold-start weight estimates for bodyweight-ratio lifts (e.g. bench press).
+- **Profile settings** — name, age, height, and bodyweight; bodyweight feeds the cold-start weight estimates for bodyweight-ratio lifts (e.g. bench press).
+- **English / Spanish** — full UI translation with a live toggle in Settings; defaults to Spanish on first launch. Dates localised via `date-fns`; units (kg/cm) intentionally not localised yet.
 - **Offline-only** — state persists via `AsyncStorage`; no account, no network.
 
 ## Tech stack
@@ -35,6 +36,7 @@ Design constraints that shape the codebase:
 - TypeScript (strict)
 - React Navigation (native stack)
 - Zustand with `persist` middleware over `AsyncStorage`
+- `i18next` + `react-i18next` for translation, English / Spanish bundles in `src/i18n/`
 - `react-native-chart-kit` / `react-native-svg` for stats charts
 - `react-native-draggable-flatlist` + `react-native-reanimated` for exercise reordering
 
@@ -79,7 +81,7 @@ Six stores, kept deliberately separate:
 | `historyStore`  | yes       | Append-only list of completed sessions.                                 |
 | `statsStore`    | yes       | Derived 1RM history and PR records (idempotent via `processedSessionIds`). |
 | `routineStore`  | yes       | Saved routine templates.                                                |
-| `profileStore`  | yes       | User profile (name, age, bodyweight). `0` means "not set" for the numbers. |
+| `profileStore`  | yes       | User profile (name, age, height, bodyweight, language). `0` means "not set" for numbers; language defaults to `'es'`. |
 | `draftStore`    | no        | In-memory scratch for the multi-screen builder flow.                    |
 
 On `completeSession()`, `workoutStore` hands the finished session to `historyStore` and `statsStore`, then clears `current`. Prior-session state is captured before the new session is appended so PR detection sees only strictly-earlier sessions.

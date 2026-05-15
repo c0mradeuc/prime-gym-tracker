@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors, radius, spacing } from '../theme';
 import { PrType, SetEntry } from '../types';
@@ -14,12 +15,6 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const prLabel: Record<PrType, string> = {
-  weight: '🥇 Weight PR',
-  reps: '🥇 Reps PR',
-  volume: '🥇 Volume PR',
-};
-
 export const SetRow: React.FC<Props> = ({
   index,
   set,
@@ -30,6 +25,12 @@ export const SetRow: React.FC<Props> = ({
   prBadge,
   children,
 }) => {
+  const { t } = useTranslation();
+  const prLabel: Record<PrType, string> = {
+    weight: t('components.prWeight'),
+    reps: t('components.prReps'),
+    volume: t('components.prVolume'),
+  };
   return (
     <View
       style={[
@@ -45,19 +46,19 @@ export const SetRow: React.FC<Props> = ({
     >
       <Pressable onPress={onPress} style={styles.row}>
         <Text style={styles.idx}>
-          {set.warmup ? 'W' : `#${index + 1}`}
+          {set.warmup ? t('components.setWarmupShort') : `#${index + 1}`}
         </Text>
-        {set.warmup ? <View style={styles.warmupBadge}><Text style={styles.warmupBadgeText}>warm-up</Text></View> : null}
+        {set.warmup ? <View style={styles.warmupBadge}><Text style={styles.warmupBadgeText}>{t('components.setWarmupBadge')}</Text></View> : null}
         {prBadge ? (
           <View style={styles.prBadge}>
             <Text style={styles.prBadgeText}>{prLabel[prBadge]}</Text>
           </View>
         ) : null}
         <Text style={styles.cell}>
-          {set.reps} <Text style={styles.unit}>reps</Text>
+          {set.reps} <Text style={styles.unit}>{t('components.setReps')}</Text>
         </Text>
         <Text style={styles.cell}>
-          {set.weight} <Text style={styles.unit}>kg</Text>
+          {set.weight} <Text style={styles.unit}>{t('components.setKg')}</Text>
         </Text>
         <Pressable
           onPress={onToggleDone}
@@ -73,7 +74,7 @@ export const SetRow: React.FC<Props> = ({
         <View style={styles.editor}>
           {children}
           <Pressable onPress={onDelete} style={styles.deleteBtn}>
-            <Text style={styles.deleteText}>Delete set</Text>
+            <Text style={styles.deleteText}>{t('components.deleteSet')}</Text>
           </Pressable>
         </View>
       ) : null}

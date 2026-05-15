@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Chip } from '../components/Chip';
@@ -14,14 +15,8 @@ import { daysSinceLastTrainedByGroup } from '../utils/stats';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SelectMuscleGroups'>;
 
-const formatDays = (days: number | undefined): string => {
-  if (days === undefined) return '· new';
-  if (days === 0) return '· today';
-  if (days > 5) return `· ⚠ ${days}d`;
-  return `· ${days}d`;
-};
-
 export const SelectMuscleGroupsScreen: React.FC<Props> = ({ navigation }) => {
+  const { t } = useTranslation();
   const selected = useDraftStore((s) => s.muscleGroups);
   const setMuscleGroups = useDraftStore((s) => s.setMuscleGroups);
   const mode = useDraftStore((s) => s.mode);
@@ -30,6 +25,13 @@ export const SelectMuscleGroupsScreen: React.FC<Props> = ({ navigation }) => {
     () => daysSinceLastTrainedByGroup(sessions),
     [sessions],
   );
+
+  const formatDays = (days: number | undefined): string => {
+    if (days === undefined) return t('builder.dayNew');
+    if (days === 0) return t('builder.dayToday');
+    if (days > 5) return t('builder.daysAgoWarn', { days });
+    return t('builder.daysAgo', { days });
+  };
 
   const toggle = (id: MuscleGroupId) => {
     const next = selected.includes(id)
@@ -41,17 +43,17 @@ export const SelectMuscleGroupsScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.title}>Pick muscle groups</Text>
+        <Text style={styles.title}>{t('builder.muscleTitle')}</Text>
         <Text style={styles.subtitle}>
           {mode === 'routine'
-            ? 'Tap one or more for this routine.'
-            : 'Tap one or more to train today.'}
+            ? t('builder.muscleSubtitleRoutine')
+            : t('builder.muscleSubtitleSession')}
         </Text>
         <View style={styles.chipsWrap}>
           {MUSCLE_GROUPS.map((mg) => (
             <Chip
               key={mg.id}
-              label={`${mg.emoji} ${mg.name} ${formatDays(daysByGroup[mg.id])}`}
+              label={`${mg.emoji} ${t(`muscle.${mg.id}`)} ${formatDays(daysByGroup[mg.id])}`}
               selected={selected.includes(mg.id)}
               onPress={() => toggle(mg.id)}
             />
@@ -60,7 +62,7 @@ export const SelectMuscleGroupsScreen: React.FC<Props> = ({ navigation }) => {
       </ScrollView>
       <View style={styles.footer}>
         <PrimaryButton
-          label={`Next (${selected.length})`}
+          label={t('builder.next', { count: selected.length })}
           disabled={selected.length === 0}
           onPress={() => navigation.navigate('SelectExercises')}
         />

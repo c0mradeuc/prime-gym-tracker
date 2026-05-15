@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { format } from 'date-fns';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { exerciseById, muscleGroupById } from '../data/catalog';
@@ -9,19 +9,21 @@ import { useDraftStore } from '../store/draftStore';
 import { useRoutineStore } from '../store/routineStore';
 import { colors, radius, spacing } from '../theme';
 import { confirmAction } from '../utils/confirm';
+import { formatDate } from '../utils/format';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RoutineList'>;
 
 export const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
+  const { t } = useTranslation();
   const routines = useRoutineStore((s) => s.routines);
   const deleteRoutine = useRoutineStore((s) => s.deleteRoutine);
   const loadFromRoutine = useDraftStore((s) => s.loadFromRoutine);
 
   const onDelete = (id: string, name: string) => {
     confirmAction({
-      title: 'Delete routine',
-      message: `Remove "${name}"? This cannot be undone.`,
-      confirmLabel: 'Delete',
+      title: t('routines.deleteTitle'),
+      message: t('routines.deleteMessage', { name }),
+      confirmLabel: t('routines.deleteConfirm'),
       destructive: true,
       onConfirm: () => deleteRoutine(id),
     });
@@ -38,14 +40,12 @@ export const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
             : { padding: spacing.lg, paddingBottom: spacing.xxl }
         }
         ListEmptyComponent={
-          <Text style={styles.empty}>
-            No saved routines yet.
-          </Text>
+          <Text style={styles.empty}>{t('routines.empty')}</Text>
         }
         renderItem={({ item }) => {
           const exNames = item.exercises
             .slice(0, 4)
-            .map((e) => exerciseById(e.exerciseId)?.name ?? e.exerciseId);
+            .map((e) => t(`exercise.${e.exerciseId}`));
           const remaining = item.exercises.length - exNames.length;
           const muscles = item.muscleGroups
             .map((m) => muscleGroupById(m)?.emoji)
@@ -65,17 +65,19 @@ export const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
                   onPress={() => onDelete(item.id, item.name)}
                   hitSlop={8}
                 >
-                  <Text style={styles.delete}>Delete</Text>
+                  <Text style={styles.delete}>{t('routines.delete')}</Text>
                 </Pressable>
               </View>
               <Text style={styles.meta}>
-                {muscles} · {item.exercises.length} exercise
-                {item.exercises.length === 1 ? '' : 's'} ·{' '}
-                {format(item.createdAt, 'MMM d')}
+                {t('routines.meta', {
+                  count: item.exercises.length,
+                  muscles,
+                  date: formatDate(item.createdAt, 'MMM d'),
+                })}
               </Text>
               <Text style={styles.exList}>
                 {exNames.join(' · ')}
-                {remaining > 0 ? ` · +${remaining} more` : ''}
+                {remaining > 0 ? ` · ${t('routines.more', { count: remaining })}` : ''}
               </Text>
             </Pressable>
           );

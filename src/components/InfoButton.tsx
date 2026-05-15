@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Modal,
   Pressable,
@@ -23,6 +24,7 @@ export const InfoButton: React.FC<Props> = ({
   size = 18,
   style,
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   return (
@@ -58,7 +60,7 @@ export const InfoButton: React.FC<Props> = ({
               onPress={() => setOpen(false)}
               style={styles.closeBtn}
             >
-              <Text style={styles.closeText}>Got it</Text>
+              <Text style={styles.closeText}>{t('components.infoGotIt')}</Text>
             </Pressable>
           </Pressable>
         </Pressable>

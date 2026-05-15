@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Modal,
   Pressable,
@@ -25,6 +26,7 @@ import { equipmentIncrement, suggestWeight } from '../utils/weight';
 type Props = NativeStackScreenProps<RootStackParamList, 'ConfigureExercises'>;
 
 export const ConfigureExercisesScreen: React.FC<Props> = ({ navigation }) => {
+  const { t } = useTranslation();
   const mode = useDraftStore((s) => s.mode);
   const muscleGroups = useDraftStore((s) => s.muscleGroups);
   const exerciseIds = useDraftStore((s) => s.exerciseIds);
@@ -117,24 +119,26 @@ export const ConfigureExercisesScreen: React.FC<Props> = ({ navigation }) => {
     <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>
-          {mode === 'routine' ? 'Configure routine' : 'Configure'}
+          {mode === 'routine'
+            ? t('builder.configureTitleRoutine')
+            : t('builder.configureTitle')}
         </Text>
         <Text style={styles.subtitle}>
           {mode === 'routine'
-            ? 'Pick a sets×reps scheme and starting weight for each exercise.'
+            ? t('builder.configureSubtitleRoutine')
             : sourceRoutine
-            ? `Loaded routine "${sourceRoutine.name}". Tweak anything before starting.`
-            : 'Pick a sets×reps scheme and confirm starting weight.'}
+            ? t('builder.configureSubtitleLoaded', { name: sourceRoutine.name })
+            : t('builder.configureSubtitleSession')}
         </Text>
         {orderedConfigs.map((cfg) => {
           const ex = exerciseById(cfg.exerciseId)!;
           const scheme: SetRepScheme = ex.recommendedSchemes[cfg.schemeIndex];
           return (
             <View key={cfg.exerciseId} style={styles.card}>
-              <Text style={styles.exName}>{ex.name}</Text>
-              <Text style={styles.exMeta}>{ex.equipment}</Text>
+              <Text style={styles.exName}>{t(`exercise.${ex.id}`)}</Text>
+              <Text style={styles.exMeta}>{t(`equipment.${ex.equipment}`)}</Text>
 
-              <Text style={styles.sectionLabel}>Scheme</Text>
+              <Text style={styles.sectionLabel}>{t('builder.scheme')}</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -156,7 +160,7 @@ export const ConfigureExercisesScreen: React.FC<Props> = ({ navigation }) => {
                         },
                       ]}
                     >
-                      <Text style={styles.schemeLabel}>{s.label}</Text>
+                      <Text style={styles.schemeLabel}>{t(`scheme.${s.labelKey}`)}</Text>
                       <Text style={styles.schemeSub}>
                         {s.sets} × {s.reps}
                       </Text>
@@ -166,7 +170,7 @@ export const ConfigureExercisesScreen: React.FC<Props> = ({ navigation }) => {
               </ScrollView>
 
               <Text style={styles.sectionLabel}>
-                Weight (suggested for {scheme.reps} reps)
+                {t('builder.weightFor', { reps: scheme.reps })}
               </Text>
               <NumberStepper
                 value={cfg.weight}
@@ -182,12 +186,12 @@ export const ConfigureExercisesScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.footer}>
         {mode === 'routine' ? (
           <PrimaryButton
-            label={sourceRoutine ? 'Update routine' : 'Save routine'}
+            label={sourceRoutine ? t('builder.updateRoutine') : t('builder.saveRoutine')}
             onPress={() => setSaveOpen(true)}
           />
         ) : (
           <PrimaryButton
-            label="Start training"
+            label={t('builder.startTraining')}
             variant="success"
             onPress={onStart}
           />
@@ -206,17 +210,16 @@ export const ConfigureExercisesScreen: React.FC<Props> = ({ navigation }) => {
         >
           <Pressable onPress={() => null} style={styles.modalDialog}>
             <Text style={styles.modalTitle}>
-              {sourceRoutine ? 'Update routine' : 'Name this routine'}
+              {sourceRoutine ? t('builder.updateRoutine') : t('builder.nameRoutine')}
             </Text>
             <Text style={styles.modalSub}>
-              {configs.length} exercise{configs.length === 1 ? '' : 's'} ·{' '}
-              {muscleGroups.length} muscle group
-              {muscleGroups.length === 1 ? '' : 's'}
+              {t('builder.exerciseCount', { count: configs.length })} ·{' '}
+              {t('builder.groupCount', { count: muscleGroups.length })}
             </Text>
             <TextInput
               value={routineName}
               onChangeText={setRoutineName}
-              placeholder="e.g. Push day, Pull A, Legs heavy"
+              placeholder={t('builder.routinePlaceholder')}
               placeholderTextColor={colors.textMuted}
               style={styles.modalInput}
               autoFocus
@@ -228,7 +231,7 @@ export const ConfigureExercisesScreen: React.FC<Props> = ({ navigation }) => {
                 onPress={() => setSaveOpen(false)}
                 style={styles.modalCancel}
               >
-                <Text style={styles.modalCancelText}>Cancel</Text>
+                <Text style={styles.modalCancelText}>{t('builder.cancel')}</Text>
               </Pressable>
               <Pressable
                 onPress={onSaveRoutine}
@@ -239,7 +242,7 @@ export const ConfigureExercisesScreen: React.FC<Props> = ({ navigation }) => {
                 ]}
               >
                 <Text style={styles.modalSaveText}>
-                  {sourceRoutine ? 'Update' : 'Save'}
+                  {sourceRoutine ? t('builder.update') : t('builder.save')}
                 </Text>
               </Pressable>
             </View>

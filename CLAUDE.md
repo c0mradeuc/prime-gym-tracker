@@ -57,3 +57,16 @@ Warmup sets (`SetEntry.warmup`) and undone sets (`!set.done`) are excluded from 
 ### Theming
 
 `src/theme.ts` exports `colors`, `spacing`, `radius`. Dark theme is wired into React Navigation in `App.tsx` via a custom `Theme`. New screens should pull from these tokens, not hard-code values.
+
+### Internationalization
+
+The app ships English and Spanish, defaulting to **Spanish** on first launch. Language preference lives on `profileStore.language` and the active screen is `SettingsScreen`.
+
+- Library: `i18next` + `react-i18next`. Initialised once in `src/i18n/index.ts` with `compatibilityJSON: 'v4'` plural rules and `fallbackLng: 'en'`.
+- Translation bundles: `src/i18n/en.json` and `src/i18n/es.json`. Namespaces in current use: `nav`, `common`, `home`, `settings`, `builder`, `active`, `dashboard`, `history`, `session`, `exerciseList`, `exerciseDetail`, `routines`, `components`, `prType`, `category`, `muscle`, `scheme`, `exercise`, `equipment`, `units`.
+- **Hard rule:** no new screen ships hard-coded user-visible strings. Every `<Text>` and dialog title goes through `t()`.
+- App.tsx subscribes to `profileStore.language` and calls `i18n.changeLanguage` on change. The Stack.Navigator screen titles use `t('nav.*')` inside the component so changing the language re-renders headers.
+- **Catalog data is keyed, not duplicated.** `src/data/catalog.ts` defines stable ids (`bench-press`, `quads`, `hyp_4x8`, etc.). Render sites call `t('exercise.<id>')`, `t('muscle.<id>')`, `t('scheme.<id>')`. The `name` field on `MuscleGroup` / `Exercise` is legacy English; do not use it in UI.
+- **Set/rep schemes:** `SetRepScheme.labelKey` is the i18n key (e.g. `'hyp_4x8'`), not a displayable string. Always render via `t(\`scheme.\${s.labelKey}\`)`.
+- **Dates** are formatted via `src/utils/format.ts` (`formatDate`, `formatRelative`), which wraps `date-fns` with the active `date-fns/locale` (`enUS` / `es`). Do not call `format()` from `date-fns` directly in screens.
+- **Numbers and units are intentionally NOT localised yet.** kg/cm stay as kg/cm, `toLocaleString()` uses the device default. A units-toggle feature is planned; until then, do not introduce a `formatNumber` wrapper.

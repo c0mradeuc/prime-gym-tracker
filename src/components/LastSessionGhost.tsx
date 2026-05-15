@@ -1,8 +1,9 @@
-import { formatDistanceToNowStrict } from 'date-fns';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { Session } from '../types';
 import { colors, radius, spacing } from '../theme';
+import { formatRelative } from '../utils/format';
 
 type Props = {
   exerciseId: string;
@@ -10,11 +11,12 @@ type Props = {
 };
 
 export const LastSessionGhost: React.FC<Props> = ({ exerciseId, lastSession }) => {
+  const { t } = useTranslation();
   if (!lastSession || !lastSession.completedAt) {
     return (
       <View style={styles.row}>
-        <Text style={styles.label}>Last session</Text>
-        <Text style={styles.value}>— first time</Text>
+        <Text style={styles.label}>{t('components.lastSessionLabel')}</Text>
+        <Text style={styles.value}>{t('components.lastSessionFirst')}</Text>
       </View>
     );
   }
@@ -23,8 +25,8 @@ export const LastSessionGhost: React.FC<Props> = ({ exerciseId, lastSession }) =
   if (working.length === 0) {
     return (
       <View style={styles.row}>
-        <Text style={styles.label}>Last session</Text>
-        <Text style={styles.value}>— no logged sets</Text>
+        <Text style={styles.label}>{t('components.lastSessionLabel')}</Text>
+        <Text style={styles.value}>{t('components.lastSessionNone')}</Text>
       </View>
     );
   }
@@ -32,16 +34,17 @@ export const LastSessionGhost: React.FC<Props> = ({ exerciseId, lastSession }) =
     (b, s) => (s.weight > b.weight ? s : b),
     working[0],
   );
-  const ago = formatDistanceToNowStrict(lastSession.completedAt, {
-    addSuffix: true,
-  });
   return (
     <View style={styles.row}>
-      <Text style={styles.label}>Last session</Text>
+      <Text style={styles.label}>{t('components.lastSessionLabel')}</Text>
       <Text style={styles.value}>
-        {working.length}×{top.reps} @ {top.weight} kg
+        {t('components.lastSessionValue', {
+          sets: working.length,
+          reps: top.reps,
+          weight: top.weight,
+        })}
       </Text>
-      <Text style={styles.ago}>{ago}</Text>
+      <Text style={styles.ago}>{formatRelative(lastSession.completedAt)}</Text>
     </View>
   );
 };

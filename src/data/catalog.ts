@@ -13,13 +13,13 @@ export const MUSCLE_GROUPS: MuscleGroup[] = [
   { id: 'abs', name: 'Abs', emoji: '🧱' },
 ];
 
-const HYP_4x6 = { sets: 4, reps: 6, label: 'Hypertrophy 4×6' };
-const HYP_4x8 = { sets: 4, reps: 8, label: 'Hypertrophy 4×8' };
-const HYP_3x10 = { sets: 3, reps: 10, label: 'Hypertrophy 3×10' };
-const HYP_4x10 = { sets: 4, reps: 10, label: 'Hypertrophy 4×10' };
-const HYP_3x12 = { sets: 3, reps: 12, label: 'Hypertrophy 3×12' };
-const END_3x15 = { sets: 3, reps: 15, label: 'Endurance 3×15' };
-const END_3x20 = { sets: 3, reps: 20, label: 'Endurance 3×20' };
+const HYP_4x6 = { sets: 4, reps: 6, labelKey: 'hyp_4x6' };
+const HYP_4x8 = { sets: 4, reps: 8, labelKey: 'hyp_4x8' };
+const HYP_3x10 = { sets: 3, reps: 10, labelKey: 'hyp_3x10' };
+const HYP_4x10 = { sets: 4, reps: 10, labelKey: 'hyp_4x10' };
+const HYP_3x12 = { sets: 3, reps: 12, labelKey: 'hyp_3x12' };
+const END_3x15 = { sets: 3, reps: 15, labelKey: 'end_3x15' };
+const END_3x20 = { sets: 3, reps: 20, labelKey: 'end_3x20' };
 
 // Default scheme bundles. First entry = best hypertrophy (default selection),
 // last entry = endurance/resistance.
@@ -465,10 +465,10 @@ export const EXERCISES: Exercise[] = [
     muscleGroup: 'abs',
     equipment: 'bodyweight',
     recommendedSchemes: [
-      { sets: 3, reps: 30, label: 'Hypertrophy 3×30s' },
-      { sets: 3, reps: 45, label: 'Hypertrophy 3×45s' },
-      { sets: 3, reps: 60, label: 'Hypertrophy 3×60s' },
-      { sets: 3, reps: 90, label: 'Endurance 3×90s' },
+      { sets: 3, reps: 30, labelKey: 'hyp_3x30s' },
+      { sets: 3, reps: 45, labelKey: 'hyp_3x45s' },
+      { sets: 3, reps: 60, labelKey: 'hyp_3x60s' },
+      { sets: 3, reps: 90, labelKey: 'end_3x90s' },
     ],
   },
   {

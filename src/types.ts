@@ -21,7 +21,8 @@ export type Equipment = 'barbell' | 'dumbbell' | 'machine' | 'cable' | 'bodyweig
 export type SetRepScheme = {
   sets: number;
   reps: number;
-  label: string;
+  /** i18n key under the "scheme" namespace, e.g. "hyp_4x8" → t('scheme.hyp_4x8'). */
+  labelKey: string;
 };
 
 export type BwRatio = { reps: number; ratio: number };

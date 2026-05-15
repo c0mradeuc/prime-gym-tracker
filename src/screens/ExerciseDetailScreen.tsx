@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { format } from 'date-fns';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dimensions,
   Pressable,
@@ -17,6 +17,7 @@ import { RootStackParamList } from '../navigation';
 import { useStatsStore } from '../store/statsStore';
 import { colors, radius, spacing } from '../theme';
 import { OneRmPoint, PrType } from '../types';
+import { formatDate } from '../utils/format';
 import { overloadSlope } from '../utils/stats';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ExerciseDetail'>;
@@ -41,47 +42,25 @@ const chartConfig = {
   propsForBackgroundLines: { stroke: colors.border },
 };
 
-const PR_LABEL: Record<PrType, string> = {
-  weight: 'Weight',
-  reps: 'Reps',
-  volume: 'Volume',
-};
-
-const INFO = {
-  pr: {
-    title: 'Latest PR',
-    body:
-      'The most recent Personal Record set for this exercise, across any of three axes:\n\n• Weight PR — heaviest single set ever\n• Reps PR — most reps you\'ve ever done at this weight or heavier\n• Volume PR — biggest single-set volume (reps × weight) ever\n\nWarmup sets are excluded. The card shows whichever PR was hit most recently; the full timeline of every PR for this exercise lives in the "Recent PRs" list further down.',
-  },
-  overload: {
-    title: 'Progressive overload (kg/week)',
-    body:
-      'How fast your top working-set weight is climbing on this exercise, measured as a least-squares linear regression over the last 4 weeks of completed sessions.\n\nA positive slope (e.g. +1.5 kg/week) means you are progressively overloading — the prerequisite for hypertrophy. A flat or negative slope means it is time to push the weight, change the rep range, or check recovery.\n\nNeeds at least 3 data points in the window. Updates automatically as you log more sessions.',
-  },
-  ranges: {
-    title: 'Date range',
-    body:
-      'Filters the two charts below to the last 1 month, 3 months, or all-time. Useful for spotting a recent trend without years of history compressing the lines.',
-  },
-  topWeight: {
-    title: 'Top set weight',
-    body:
-      'Heaviest weight you used in a single working set during each session, plotted over time. Best raw indicator of strength gain on a given exercise. Stagnation here for several weeks signals the lift has stalled.',
-  },
-  est1Rm: {
-    title: 'Estimated 1RM',
-    body:
-      'Per-session estimated one-rep max for this exercise, computed with the Epley formula on your heaviest working set:\n\n  weight × (1 + reps / 30)\n\nMore stable than the top-set chart because it normalises across rep ranges (a 5×5 day and a 3×10 day become comparable). The slow upward drift here is the signal you want to see.',
-  },
-  recentPrs: {
-    title: 'Recent PRs',
-    body:
-      'Every PR ever achieved on this exercise, newest first. Shown as the type (Weight / Reps / Volume), the achievement, and the date. Each PR was detected automatically when you completed a session.',
-  },
-};
-
 export const ExerciseDetailScreen: React.FC<Props> = ({ route }) => {
+  const { t } = useTranslation();
   const { exerciseId } = route.params;
+
+  const PR_LABEL: Record<PrType, string> = {
+    weight: t('prType.weight'),
+    reps: t('prType.reps'),
+    volume: t('prType.volume'),
+  };
+
+  const INFO = {
+    pr: { title: t('exerciseDetail.infoPrTitle'), body: t('exerciseDetail.infoPrBody') },
+    overload: { title: t('exerciseDetail.infoOverloadTitle'), body: t('exerciseDetail.infoOverloadBody') },
+    ranges: { title: t('exerciseDetail.infoRangesTitle'), body: t('exerciseDetail.infoRangesBody') },
+    topWeight: { title: t('exerciseDetail.infoTopWeightTitle'), body: t('exerciseDetail.infoTopWeightBody') },
+    est1Rm: { title: t('exerciseDetail.infoEst1RmTitle'), body: t('exerciseDetail.infoEst1RmBody') },
+    recentPrs: { title: t('exerciseDetail.infoRecentPrsTitle'), body: t('exerciseDetail.infoRecentPrsBody') },
+  };
+
   const oneRmHistory = useStatsStore((s) => s.oneRmHistory);
   const allPrs = useStatsStore((s) => s.prs);
 
@@ -117,37 +96,38 @@ export const ExerciseDetailScreen: React.FC<Props> = ({ route }) => {
   if (!ex) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.empty}>Exercise not found.</Text>
+        <Text style={styles.empty}>{t('exerciseDetail.notFound')}</Text>
       </SafeAreaView>
     );
   }
 
+  const prValue = (pr: typeof latestPr): string => {
+    if (!pr) return '';
+    if (pr.type === 'weight') return t('exerciseDetail.prWeight', { value: pr.value, reps: pr.reps });
+    if (pr.type === 'reps') return t('exerciseDetail.prReps', { value: pr.value, weight: pr.weight });
+    return t('exerciseDetail.prVolume', { value: Math.round(pr.value) });
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.title}>{ex.name}</Text>
+        <Text style={styles.title}>{t(`exercise.${ex.id}`)}</Text>
         <Text style={styles.subtitle}>
-          {mg ? `${mg.emoji} ${mg.name} · ` : ''}
-          {points.length} session{points.length === 1 ? '' : 's'}
+          {mg ? `${mg.emoji} ${t(`muscle.${mg.id}`)} · ` : ''}
+          {t('exerciseDetail.sessionCount', { count: points.length })}
         </Text>
 
         {latestPr ? (
           <View style={styles.prCard}>
             <View style={styles.prHeader}>
               <Text style={styles.prLabel}>
-                🥇 Latest {PR_LABEL[latestPr.type]} PR
+                {t('exerciseDetail.latestPr', { type: PR_LABEL[latestPr.type] })}
               </Text>
               <InfoButton title={INFO.pr.title} body={INFO.pr.body} />
             </View>
-            <Text style={styles.prValue}>
-              {latestPr.type === 'weight'
-                ? `${latestPr.value} kg × ${latestPr.reps}`
-                : latestPr.type === 'reps'
-                ? `${latestPr.value} reps @ ${latestPr.weight} kg`
-                : `${Math.round(latestPr.value)} kg single-set vol`}
-            </Text>
+            <Text style={styles.prValue}>{prValue(latestPr)}</Text>
             <Text style={styles.prDate}>
-              {format(latestPr.date, 'MMM d, yyyy')}
+              {formatDate(latestPr.date, 'MMM d, yyyy')}
             </Text>
           </View>
         ) : null}
@@ -155,7 +135,7 @@ export const ExerciseDetailScreen: React.FC<Props> = ({ route }) => {
         {slope !== null ? (
           <View style={styles.slopeCard}>
             <View style={styles.slopeLeft}>
-              <Text style={styles.slopeLabel}>Overload (last 4 weeks)</Text>
+              <Text style={styles.slopeLabel}>{t('exerciseDetail.overload')}</Text>
               <InfoButton title={INFO.overload.title} body={INFO.overload.body} />
             </View>
             <Text
@@ -171,8 +151,9 @@ export const ExerciseDetailScreen: React.FC<Props> = ({ route }) => {
                 },
               ]}
             >
-              {slope >= 0 ? '+' : ''}
-              {slope.toFixed(2)} kg / week
+              {t('exerciseDetail.overloadValue', {
+                value: `${slope >= 0 ? '+' : ''}${slope.toFixed(2)}`,
+              })}
             </Text>
           </View>
         ) : null}
@@ -205,12 +186,12 @@ export const ExerciseDetailScreen: React.FC<Props> = ({ route }) => {
         {filtered.length >= 1 ? (
           <>
             <View style={styles.chartHead}>
-              <Text style={styles.chartTitle}>Top set weight (kg)</Text>
+              <Text style={styles.chartTitle}>{t('exerciseDetail.topWeightChart')}</Text>
               <InfoButton title={INFO.topWeight.title} body={INFO.topWeight.body} />
             </View>
             <LineChart
               data={{
-                labels: filtered.map((p) => format(p.date, 'M/d')),
+                labels: filtered.map((p) => formatDate(p.date, 'M/d')),
                 datasets: [{ data: filtered.map((p) => p.topWeight) }],
               }}
               width={screenW - spacing.lg * 2}
@@ -221,12 +202,12 @@ export const ExerciseDetailScreen: React.FC<Props> = ({ route }) => {
             />
 
             <View style={styles.chartHead}>
-              <Text style={styles.chartTitle}>Estimated 1RM (kg)</Text>
+              <Text style={styles.chartTitle}>{t('exerciseDetail.est1RmChart')}</Text>
               <InfoButton title={INFO.est1Rm.title} body={INFO.est1Rm.body} />
             </View>
             <LineChart
               data={{
-                labels: filtered.map((p) => format(p.date, 'M/d')),
+                labels: filtered.map((p) => formatDate(p.date, 'M/d')),
                 datasets: [{ data: filtered.map((p) => Math.round(p.oneRm)) }],
               }}
               width={screenW - spacing.lg * 2}
@@ -237,28 +218,20 @@ export const ExerciseDetailScreen: React.FC<Props> = ({ route }) => {
             />
           </>
         ) : (
-          <Text style={styles.empty}>No data in this range.</Text>
+          <Text style={styles.empty}>{t('exerciseDetail.noDataRange')}</Text>
         )}
 
         {exercisePrs.length > 0 ? (
           <View style={[styles.card, { marginTop: spacing.lg }]}>
             <View style={styles.sectionHead}>
-              <Text style={styles.sectionTitle}>Recent PRs</Text>
+              <Text style={styles.sectionTitle}>{t('exerciseDetail.recentPrs')}</Text>
               <InfoButton title={INFO.recentPrs.title} body={INFO.recentPrs.body} />
             </View>
             {exercisePrs.slice(0, 8).map((pr) => (
               <View key={pr.id} style={styles.prRow}>
                 <Text style={styles.prRowType}>{PR_LABEL[pr.type]}</Text>
-                <Text style={styles.prRowText}>
-                  {pr.type === 'weight'
-                    ? `${pr.value} kg × ${pr.reps}`
-                    : pr.type === 'reps'
-                    ? `${pr.value} reps @ ${pr.weight} kg`
-                    : `${Math.round(pr.value)} kg`}
-                </Text>
-                <Text style={styles.prRowDate}>
-                  {format(pr.date, 'MMM d')}
-                </Text>
+                <Text style={styles.prRowText}>{prValue(pr)}</Text>
+                <Text style={styles.prRowDate}>{formatDate(pr.date, 'MMM d')}</Text>
               </View>
             ))}
           </View>

@@ -1,5 +1,7 @@
+import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Modal,
   Platform,
@@ -11,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Card } from '../components/Card';
 import { DragCard } from '../components/DragCard';
 import { LastSessionGhost } from '../components/LastSessionGhost';
 import { NumberStepper } from '../components/NumberStepper';
@@ -21,7 +24,7 @@ import { RootStackParamList } from '../navigation';
 import { useHistoryStore } from '../store/historyStore';
 import { useRoutineStore } from '../store/routineStore';
 import { useWorkoutStore } from '../store/workoutStore';
-import { colors, radius, spacing } from '../theme';
+import { colors, elevation, fontFamily, radius, spacing, type } from '../theme';
 import { confirmAction } from '../utils/confirm';
 import { previewSetPr } from '../utils/prDetection';
 import { lastSessionWithExercise } from '../utils/stats';
@@ -61,6 +64,7 @@ const formatElapsed = (ms: number) => {
 };
 
 export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
+  const { t } = useTranslation();
   const session = useWorkoutStore((s) => s.current);
   const history = useHistoryStore((s) => s.sessions);
   const addSet = useWorkoutStore((s) => s.addSet);
@@ -159,9 +163,9 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
 
   const onComplete = () => {
     confirmAction({
-      title: 'Complete training',
-      message: 'Save and finish this session?',
-      confirmLabel: 'Complete',
+      title: t('active.completeTitle'),
+      message: t('active.completeMessage'),
+      confirmLabel: t('active.completeConfirm'),
       onConfirm: () => {
         if (session.routineId) {
           finishAndGoHome();
@@ -192,9 +196,9 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
 
   const onDiscard = () => {
     confirmAction({
-      title: 'Discard training',
-      message: 'Throw away this session? This cannot be undone.',
-      confirmLabel: 'Discard',
+      title: t('active.discardTitle'),
+      message: t('active.discardMessage'),
+      confirmLabel: t('active.discardConfirm'),
       destructive: true,
       onConfirm: () => {
         discardSession();
@@ -205,9 +209,9 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
 
   const askRemoveExercise = (id: string, name: string) => {
     confirmAction({
-      title: 'Remove exercise',
-      message: `Remove "${name}" from this session?`,
-      confirmLabel: 'Remove',
+      title: t('active.removeExerciseTitle'),
+      message: t('active.removeExerciseMessage', { name }),
+      confirmLabel: t('active.removeConfirm'),
       destructive: true,
       onConfirm: () => removeExercise(id),
     });
@@ -215,9 +219,9 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
 
   const askRemoveMuscleGroup = (mgId: string, name: string) => {
     confirmAction({
-      title: 'Remove muscle group',
-      message: `Remove "${name}" and all its exercises?`,
-      confirmLabel: 'Remove',
+      title: t('active.removeMuscleTitle'),
+      message: t('active.removeMuscleMessage', { name }),
+      confirmLabel: t('active.removeConfirm'),
       destructive: true,
       onConfirm: () => removeMuscleGroup(mgId as any),
     });
@@ -232,22 +236,21 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.headerRow}>
           <Text style={styles.timer}>{formatElapsed(elapsed)}</Text>
           <Text style={styles.progress}>
-            {doneSets}/{totalSets} sets
+            {doneSets}/{totalSets} {t('active.setsSuffix')}
           </Text>
         </View>
         <View style={styles.muscleRow}>
           {session.muscleGroups.map((mgId) => {
             const mg = muscleGroupById(mgId);
+            const mgName = mg ? t(`muscle.${mg.id}`) : mgId;
             return (
               <Pressable
                 key={mgId}
-                onLongPress={() =>
-                  askRemoveMuscleGroup(mgId, mg?.name ?? mgId)
-                }
+                onLongPress={() => askRemoveMuscleGroup(mgId, mgName)}
                 style={styles.muscleChip}
               >
                 <Text style={styles.muscleChipText}>
-                  {mg?.emoji} {mg?.name}
+                  {mg?.emoji} {mgName}
                 </Text>
               </Pressable>
             );
@@ -257,9 +260,7 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {session.exercises.length === 0 ? (
-          <Text style={styles.empty}>
-            No exercises yet. Tap "Add exercise" below.
-          </Text>
+          <Text style={styles.empty}>{t('active.empty')}</Text>
         ) : null}
 
         {session.exercises.map((exInSession) => {
@@ -278,7 +279,7 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
               key={exInSession.exerciseId}
               style={[
                 styles.card,
-                allDone && { borderColor: colors.success },
+                allDone && styles.cardAllDone,
                 isDragging && styles.cardDragging,
                 isHover && styles.cardHover,
               ]}
@@ -289,7 +290,11 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                   style={styles.dragHandle}
                   {...dragSourceProps(ex.id)}
                 >
-                  <Text style={styles.dragHandleText}>⋮⋮</Text>
+                  <Ionicons
+                    name="reorder-three"
+                    size={22}
+                    color={colors.textFaint}
+                  />
                 </DragCard>
 
                 <View
@@ -298,13 +303,13 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                     {
                       backgroundColor: allDone
                         ? colors.success
-                        : 'transparent',
+                        : colors.surfaceAlt,
                       borderColor: allDone ? colors.success : colors.border,
                     },
                   ]}
                 >
                   {allDone ? (
-                    <Text style={styles.checkBubbleText}>✓</Text>
+                    <Ionicons name="checkmark" size={22} color="#0B0D11" />
                   ) : (
                     <Text style={styles.checkBubbleProgress}>
                       {done}/{total}
@@ -316,9 +321,9 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                   onPress={() => toggleOpen(ex.id)}
                   style={styles.headerLabel}
                 >
-                  <Text style={styles.cardTitle}>{ex.name}</Text>
+                  <Text style={styles.cardTitle}>{t(`exercise.${ex.id}`)}</Text>
                   <Text style={styles.cardSub}>
-                    {mg?.emoji} {mg?.name}
+                    {mg?.emoji} {mg ? t(`muscle.${mg.id}`) : ''}
                   </Text>
                 </Pressable>
 
@@ -327,7 +332,11 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                   hitSlop={12}
                   style={styles.chevronBtn}
                 >
-                  <Text style={styles.chevron}>{isOpen ? '▾' : '▸'}</Text>
+                  <Ionicons
+                    name={isOpen ? 'chevron-down' : 'chevron-forward'}
+                    size={18}
+                    color={colors.textMuted}
+                  />
                 </Pressable>
               </View>
 
@@ -360,7 +369,7 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                         }}
                       >
                         <View>
-                          <Text style={styles.editLabel}>Reps</Text>
+                          <Text style={styles.editLabel}>{t('active.reps')}</Text>
                           <NumberStepper
                             value={set.reps}
                             onChange={(v) =>
@@ -372,7 +381,7 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                           />
                         </View>
                         <View>
-                          <Text style={styles.editLabel}>Weight</Text>
+                          <Text style={styles.editLabel}>{t('active.weight')}</Text>
                           <NumberStepper
                             value={set.weight}
                             onChange={(v) =>
@@ -398,7 +407,7 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                               set.warmup && styles.warmupToggleTextOn,
                             ]}
                           >
-                            {set.warmup ? '✓ Warm-up set' : 'Mark as warm-up'}
+                            {set.warmup ? t('active.warmupOn') : t('active.warmupOff')}
                           </Text>
                         </Pressable>
                       </SetRow>
@@ -410,13 +419,25 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                       onPress={() => addSet(ex.id)}
                       style={styles.addSetBtn}
                     >
-                      <Text style={styles.addSetText}>+ Add set</Text>
+                      <Ionicons
+                        name="add"
+                        size={16}
+                        color={colors.primary}
+                        style={{ marginRight: 4 }}
+                      />
+                      <Text style={styles.addSetText}>{t('active.addSet')}</Text>
                     </Pressable>
                     <Pressable
-                      onPress={() => askRemoveExercise(ex.id, ex.name)}
+                      onPress={() => askRemoveExercise(ex.id, t(`exercise.${ex.id}`))}
                       style={styles.removeBtn}
                     >
-                      <Text style={styles.removeBtnText}>Remove exercise</Text>
+                      <Ionicons
+                        name="trash-outline"
+                        size={14}
+                        color={colors.danger}
+                        style={{ marginRight: 4 }}
+                      />
+                      <Text style={styles.removeBtnText}>{t('active.removeExercise')}</Text>
                     </Pressable>
                   </View>
                 </View>
@@ -426,19 +447,19 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
         })}
 
         <PrimaryButton
-          label="+ Add exercise"
+          label={t('active.addExercise')}
           variant="secondary"
           onPress={() => navigation.navigate('AddExerciseToSession')}
           style={{ marginTop: spacing.md }}
         />
         <Pressable onPress={onDiscard} style={styles.discardBtn}>
-          <Text style={styles.discardText}>Discard training</Text>
+          <Text style={styles.discardText}>{t('active.discardTraining')}</Text>
         </Pressable>
       </ScrollView>
 
       <View style={styles.footer}>
         <PrimaryButton
-          label="Complete training"
+          label={t('active.completeTraining')}
           variant="success"
           onPress={onComplete}
         />
@@ -452,15 +473,12 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
       >
         <Pressable onPress={onSkipSaveRoutine} style={styles.modalBackdrop}>
           <Pressable onPress={() => null} style={styles.modalDialog}>
-            <Text style={styles.modalTitle}>Save as routine?</Text>
-            <Text style={styles.modalSub}>
-              Reuse this session next time — name it to save, or skip to just
-              finish.
-            </Text>
+            <Text style={styles.modalTitle}>{t('active.saveRoutineTitle')}</Text>
+            <Text style={styles.modalSub}>{t('active.saveRoutineSub')}</Text>
             <TextInput
               value={routineName}
               onChangeText={setRoutineName}
-              placeholder="e.g. Push day, Pull A, Legs heavy"
+              placeholder={t('active.saveRoutinePlaceholder')}
               placeholderTextColor={colors.textMuted}
               style={styles.modalInput}
               autoFocus
@@ -469,7 +487,7 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
             />
             <View style={styles.modalActions}>
               <Pressable onPress={onSkipSaveRoutine} style={styles.modalCancel}>
-                <Text style={styles.modalCancelText}>Skip</Text>
+                <Text style={styles.modalCancelText}>{t('active.skip')}</Text>
               </Pressable>
               <Pressable
                 onPress={onSaveAsRoutine}
@@ -479,7 +497,7 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                   !routineName.trim() && { opacity: 0.4 },
                 ]}
               >
-                <Text style={styles.modalSaveText}>Save & finish</Text>
+                <Text style={styles.modalSaveText}>{t('active.saveAndFinish')}</Text>
               </Pressable>
             </View>
           </Pressable>

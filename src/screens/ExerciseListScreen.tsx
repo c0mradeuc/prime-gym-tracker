@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { exerciseById, muscleGroupById } from '../data/catalog';
@@ -10,6 +11,7 @@ import { colors, radius, spacing } from '../theme';
 type Props = NativeStackScreenProps<RootStackParamList, 'ExerciseList'>;
 
 export const ExerciseListScreen: React.FC<Props> = ({ navigation }) => {
+  const { t } = useTranslation();
   const oneRmHistory = useStatsStore((s) => s.oneRmHistory);
 
   const items = useMemo(() => {
@@ -40,10 +42,7 @@ export const ExerciseListScreen: React.FC<Props> = ({ navigation }) => {
             : { padding: spacing.lg, paddingBottom: spacing.xxl }
         }
         ListEmptyComponent={
-          <Text style={styles.empty}>
-            No exercises logged yet. Complete a session to start tracking
-            progression per exercise.
-          </Text>
+          <Text style={styles.empty}>{t('exerciseList.empty')}</Text>
         }
         renderItem={({ item }) => {
           const mg = item.ex ? muscleGroupById(item.ex.muscleGroup) : null;
@@ -55,16 +54,14 @@ export const ExerciseListScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.row}
             >
               <View style={{ flex: 1 }}>
-                <Text style={styles.name}>
-                  {item.ex?.name ?? item.id}
-                </Text>
+                <Text style={styles.name}>{item.ex ? t(`exercise.${item.ex.id}`) : item.id}</Text>
                 <Text style={styles.sub}>
-                  {mg ? `${mg.emoji} ${mg.name} · ` : ''}
-                  {item.count} session{item.count === 1 ? '' : 's'}
+                  {mg ? `${mg.emoji} ${t(`muscle.${mg.id}`)} · ` : ''}
+                  {t('exerciseList.sessionCount', { count: item.count })}
                 </Text>
               </View>
               <Text style={styles.metric}>
-                {Math.round(item.latest.oneRm)} kg 1RM
+                {t('exerciseList.oneRm', { value: Math.round(item.latest.oneRm) })}
               </Text>
             </Pressable>
           );

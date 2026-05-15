@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Chip } from '../components/Chip';
@@ -15,6 +16,7 @@ import { colors, spacing } from '../theme';
 type Props = NativeStackScreenProps<RootStackParamList, 'SelectExercises'>;
 
 export const SelectExercisesScreen: React.FC<Props> = ({ navigation }) => {
+  const { t } = useTranslation();
   const muscleGroups = useDraftStore((s) => s.muscleGroups);
   const selected = useDraftStore((s) => s.exerciseIds);
   const setExerciseIds = useDraftStore((s) => s.setExerciseIds);
@@ -30,11 +32,11 @@ export const SelectExercisesScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.title}>Choose exercises</Text>
+        <Text style={styles.title}>{t('builder.exercisesTitle')}</Text>
         <Text style={styles.subtitle}>
           {mode === 'routine'
-            ? 'Pick exercises for this routine.'
-            : 'Pick exercises for each muscle group.'}
+            ? t('builder.exercisesSubtitleRoutine')
+            : t('builder.exercisesSubtitleSession')}
         </Text>
         {muscleGroups.map((mgId) => {
           const mg = muscleGroupById(mgId);
@@ -42,13 +44,13 @@ export const SelectExercisesScreen: React.FC<Props> = ({ navigation }) => {
           return (
             <View key={mgId} style={styles.section}>
               <Text style={styles.sectionTitle}>
-                {mg?.emoji} {mg?.name}
+                {mg?.emoji} {mg ? t(`muscle.${mg.id}`) : ''}
               </Text>
               <View style={styles.chipsWrap}>
                 {exercises.map((ex) => (
                   <Chip
                     key={ex.id}
-                    label={ex.name}
+                    label={t(`exercise.${ex.id}`)}
                     selected={selected.includes(ex.id)}
                     onPress={() => toggle(ex.id)}
                   />
@@ -60,7 +62,7 @@ export const SelectExercisesScreen: React.FC<Props> = ({ navigation }) => {
       </ScrollView>
       <View style={styles.footer}>
         <PrimaryButton
-          label={`Next (${selected.length})`}
+          label={t('builder.next', { count: selected.length })}
           disabled={selected.length === 0}
           onPress={() => navigation.navigate('ConfigureExercises')}
         />

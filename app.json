@@ -16,6 +16,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "dev.prime.gymtracker",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -25,6 +26,21 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "11ec340f-dec3-4bec-b7cd-6e745a7405b3"
+      }
+    },
+    "owner": "jordan.montano",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/11ec340f-dec3-4bec-b7cd-6e745a7405b3"
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

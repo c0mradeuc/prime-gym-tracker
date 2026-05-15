@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PrimaryButton } from '../components/PrimaryButton';
@@ -10,38 +11,34 @@ import { colors, spacing } from '../theme';
 type Props = NativeStackScreenProps<RootStackParamList, 'SelectStartMode'>;
 
 export const SelectStartModeScreen: React.FC<Props> = ({ navigation }) => {
+  const { t } = useTranslation();
   const routineCount = useRoutineStore((s) => s.routines.length);
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <View style={styles.body}>
-        <Text style={styles.title}>How do you want to start?</Text>
-        <Text style={styles.subtitle}>
-          Pick a saved routine or build today&apos;s workout from muscle groups.
-        </Text>
+        <Text style={styles.title}>{t('builder.startTitle')}</Text>
+        <Text style={styles.subtitle}>{t('builder.startSubtitle')}</Text>
 
         <View style={styles.actions}>
           <PrimaryButton
             label={
               routineCount > 0
-                ? `Use a routine (${routineCount})`
-                : 'Use a routine'
+                ? t('builder.useRoutineCount', { count: routineCount })
+                : t('builder.useRoutine')
             }
             disabled={routineCount === 0}
             onPress={() => navigation.navigate('RoutineList')}
           />
           <PrimaryButton
-            label="Pick muscle groups"
+            label={t('builder.pickMuscleGroups')}
             variant="secondary"
             onPress={() => navigation.navigate('SelectMuscleGroups')}
           />
         </View>
 
         {routineCount === 0 ? (
-          <Text style={styles.hint}>
-            No routines saved yet — tap &quot;Create Routine&quot; on the home
-            screen to save one.
-          </Text>
+          <Text style={styles.hint}>{t('builder.noRoutinesHint')}</Text>
         ) : null}
       </View>
     </SafeAreaView>

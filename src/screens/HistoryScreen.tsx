@@ -1,17 +1,19 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { format } from 'date-fns';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { muscleGroupById } from '../data/catalog';
 import { RootStackParamList } from '../navigation';
 import { useHistoryStore } from '../store/historyStore';
 import { colors, radius, spacing } from '../theme';
+import { formatDate } from '../utils/format';
 import { sessionDurationMinutes, sessionVolume } from '../utils/volume';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'History'>;
 
 export const HistoryScreen: React.FC<Props> = ({ navigation }) => {
+  const { t } = useTranslation();
   const sessions = useHistoryStore((s) => s.sessions);
   const data = useMemo(
     () => [...sessions].sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0)),
@@ -29,9 +31,7 @@ export const HistoryScreen: React.FC<Props> = ({ navigation }) => {
             : { padding: spacing.lg, paddingBottom: spacing.xxl }
         }
         ListEmptyComponent={
-          <Text style={styles.empty}>
-            No sessions yet. Complete a training to see it here.
-          </Text>
+          <Text style={styles.empty}>{t('history.empty')}</Text>
         }
         renderItem={({ item }) => {
           const date = item.completedAt ?? item.startedAt;
@@ -46,21 +46,24 @@ export const HistoryScreen: React.FC<Props> = ({ navigation }) => {
             >
               <View style={styles.rowHeader}>
                 <Text style={styles.date}>
-                  {format(date, 'EEE, MMM d')}
+                  {formatDate(date, 'EEE, MMM d')}
                 </Text>
-                <Text style={styles.time}>{format(date, 'HH:mm')}</Text>
+                <Text style={styles.time}>{formatDate(date, 'HH:mm')}</Text>
               </View>
               <Text style={styles.muscles}>
                 {item.muscleGroups
-                  .map((m) => muscleGroupById(m)?.name)
-                  .filter(Boolean)
+                  .map((m) => t(`muscle.${m}`))
                   .join(' • ')}
               </Text>
               <View style={styles.metrics}>
-                <Text style={styles.metric}>{Math.round(volume)} kg vol</Text>
-                <Text style={styles.metric}>{duration} min</Text>
                 <Text style={styles.metric}>
-                  {item.exercises.length} ex
+                  {t('history.kgVol', { value: Math.round(volume) })}
+                </Text>
+                <Text style={styles.metric}>
+                  {t('history.minutes', { value: duration })}
+                </Text>
+                <Text style={styles.metric}>
+                  {t('history.exCount', { count: item.exercises.length })}
                 </Text>
               </View>
             </Pressable>

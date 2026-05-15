@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { format } from 'date-fns';
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NumberStepper } from '../components/NumberStepper';
@@ -13,12 +13,14 @@ import { useStatsStore } from '../store/statsStore';
 import { colors, radius, spacing } from '../theme';
 import { ExerciseInSession, Session, SetEntry } from '../types';
 import { confirmAction } from '../utils/confirm';
+import { formatDate } from '../utils/format';
 import { sessionDurationMinutes, sessionVolume } from '../utils/volume';
 import { equipmentIncrement } from '../utils/weight';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SessionDetail'>;
 
 export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
+  const { t } = useTranslation();
   const { sessionId } = route.params;
   const session = useHistoryStore((s) =>
     s.sessions.find((x) => x.id === sessionId),
@@ -54,7 +56,7 @@ export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             hitSlop={8}
             style={{ paddingHorizontal: spacing.sm }}
           >
-            <Text style={styles.headerAction}>Edit</Text>
+            <Text style={styles.headerAction}>{t('session.edit')}</Text>
           </Pressable>
         ) : null,
     });
@@ -77,16 +79,16 @@ export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   if (!view || !summary) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.empty}>Session not found.</Text>
+        <Text style={styles.empty}>{t('session.notFound')}</Text>
       </SafeAreaView>
     );
   }
 
   const onDelete = () => {
     confirmAction({
-      title: 'Delete session',
-      message: 'Remove this session permanently?',
-      confirmLabel: 'Delete',
+      title: t('session.deleteTitle'),
+      message: t('session.deleteMessage'),
+      confirmLabel: t('session.deleteConfirm'),
       destructive: true,
       onConfirm: () => {
         deleteSession(sessionId);
@@ -130,9 +132,9 @@ export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const deleteExercise = (exId: string, name: string) => {
     confirmAction({
-      title: 'Remove exercise',
-      message: `Remove "${name}" from this session?`,
-      confirmLabel: 'Remove',
+      title: t('session.removeExerciseTitle'),
+      message: t('session.removeExerciseMessage', { name }),
+      confirmLabel: t('session.removeConfirm'),
       destructive: true,
       onConfirm: () => {
         updateDraft((s) => ({
@@ -158,28 +160,27 @@ export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.date}>
-          {format(view.completedAt ?? view.startedAt, 'EEEE, MMM d • HH:mm')}
+          {formatDate(view.completedAt ?? view.startedAt, 'EEEE, MMM d • HH:mm')}
         </Text>
         <View style={styles.summaryRow}>
           <View style={styles.summaryCell}>
             <Text style={styles.summaryNum}>{summary.volume}</Text>
-            <Text style={styles.summaryLbl}>kg volume</Text>
+            <Text style={styles.summaryLbl}>{t('session.kgVolume')}</Text>
           </View>
           <View style={styles.summaryCell}>
             <Text style={styles.summaryNum}>{summary.duration}</Text>
-            <Text style={styles.summaryLbl}>min</Text>
+            <Text style={styles.summaryLbl}>{t('session.minutes')}</Text>
           </View>
           <View style={styles.summaryCell}>
             <Text style={styles.summaryNum}>{summary.doneSets}</Text>
-            <Text style={styles.summaryLbl}>sets done</Text>
+            <Text style={styles.summaryLbl}>{t('session.setsDone')}</Text>
           </View>
         </View>
 
-        <Text style={styles.sectionTitle}>Muscle groups</Text>
+        <Text style={styles.sectionTitle}>{t('session.muscleGroups')}</Text>
         <Text style={styles.musclesText}>
           {view.muscleGroups
-            .map((m) => muscleGroupById(m)?.name)
-            .filter(Boolean)
+            .map((m) => t(`muscle.${m}`))
             .join(' • ')}
         </Text>
 
@@ -215,7 +216,7 @@ export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
         {!editing ? (
           <Pressable onPress={onDelete} style={styles.deleteBtn}>
-            <Text style={styles.deleteText}>Delete session</Text>
+            <Text style={styles.deleteText}>{t('session.deleteSession')}</Text>
           </Pressable>
         ) : null}
       </ScrollView>
@@ -223,12 +224,12 @@ export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
       {editing ? (
         <View style={styles.footer}>
           <PrimaryButton
-            label="Cancel"
+            label={t('session.cancel')}
             variant="secondary"
             onPress={onCancel}
             style={{ marginBottom: spacing.sm }}
           />
-          <PrimaryButton label="Save changes" onPress={onSave} />
+          <PrimaryButton label={t('session.saveChanges')} onPress={onSave} />
         </View>
       ) : null}
     </SafeAreaView>
@@ -238,16 +239,19 @@ export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 const ReadOnlyExerciseCard: React.FC<{ exInSession: ExerciseInSession }> = ({
   exInSession,
 }) => {
+  const { t } = useTranslation();
   const ex = exerciseById(exInSession.exerciseId);
   return (
     <View style={styles.card}>
-      <Text style={styles.exTitle}>{ex?.name ?? exInSession.exerciseId}</Text>
+      <Text style={styles.exTitle}>{ex ? t(`exercise.${ex.id}`) : exInSession.exerciseId}</Text>
       {exInSession.sets.map((set, idx) => (
         <View key={idx} style={styles.setRow}>
-          <Text style={styles.setIdx}>{set.warmup ? 'W' : `#${idx + 1}`}</Text>
+          <Text style={styles.setIdx}>
+            {set.warmup ? t('session.warmupShort') : `#${idx + 1}`}
+          </Text>
           <Text style={styles.setText}>
-            {set.reps} reps × {set.weight} kg
-            {set.warmup ? '  (warm-up)' : ''}
+            {t('session.repsXWeight', { reps: set.reps, weight: set.weight })}
+            {set.warmup ? t('session.warmupSuffix') : ''}
           </Text>
           <Text
             style={[
@@ -278,8 +282,9 @@ const EditableExerciseCard: React.FC<{
   onDeleteSet,
   onDeleteExercise,
 }) => {
+  const { t } = useTranslation();
   const ex = exerciseById(exInSession.exerciseId);
-  const name = ex?.name ?? exInSession.exerciseId;
+  const name = ex ? t(`exercise.${ex.id}`) : exInSession.exerciseId;
   return (
     <View style={styles.card}>
       <View style={styles.editHeaderRow}>
@@ -289,7 +294,7 @@ const EditableExerciseCard: React.FC<{
           hitSlop={8}
           style={styles.removeExerciseBtn}
         >
-          <Text style={styles.removeExerciseText}>Remove</Text>
+          <Text style={styles.removeExerciseText}>{t('session.remove')}</Text>
         </Pressable>
       </View>
       {exInSession.sets.map((set, idx) => {
@@ -306,7 +311,7 @@ const EditableExerciseCard: React.FC<{
             onDelete={() => onDeleteSet(idx)}
           >
             <View>
-              <Text style={styles.editLabel}>Reps</Text>
+              <Text style={styles.editLabel}>{t('session.reps')}</Text>
               <NumberStepper
                 value={set.reps}
                 onChange={(v) => onUpdateSet(idx, { reps: v })}
@@ -316,7 +321,7 @@ const EditableExerciseCard: React.FC<{
               />
             </View>
             <View>
-              <Text style={styles.editLabel}>Weight</Text>
+              <Text style={styles.editLabel}>{t('session.weight')}</Text>
               <NumberStepper
                 value={set.weight}
                 onChange={(v) => onUpdateSet(idx, { weight: v })}
@@ -338,7 +343,7 @@ const EditableExerciseCard: React.FC<{
                   set.warmup && styles.warmupToggleTextOn,
                 ]}
               >
-                {set.warmup ? '✓ Warm-up set' : 'Mark as warm-up'}
+                {set.warmup ? t('session.warmupOn') : t('session.warmupOff')}
               </Text>
             </Pressable>
           </SetRow>
