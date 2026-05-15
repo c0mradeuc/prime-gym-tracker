@@ -60,6 +60,9 @@
     "dayToday": "· today",
     "daysAgo": "· {{days}}d",
     "daysAgoWarn": "· ⚠ {{days}}d",
+    "sectionBody": "Body",
+    "sectionArms": "Arms",
+    "sectionLegs": "Legs",
     "exercisesTitle": "Choose exercises",
     "exercisesSubtitleRoutine": "Pick exercises for this routine.",
     "exercisesSubtitleSession": "Pick exercises for each muscle group.",
@@ -241,6 +244,8 @@
     "deleteConfirm": "Delete",
     "meta_one": "{{muscles}} · {{count}} exercise · {{date}}",
     "meta_other": "{{muscles}} · {{count}} exercises · {{date}}",
+    "metaPlain_one": "{{count}} exercise · {{date}}",
+    "metaPlain_other": "{{count}} exercises · {{date}}",
     "more": "+{{count}} more"
   },
   "prType": {

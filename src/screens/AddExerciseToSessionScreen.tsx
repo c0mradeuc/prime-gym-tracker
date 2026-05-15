@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MuscleLabel } from '../components/MuscleLabel';
 import { NumberStepper } from '../components/NumberStepper';
 import { PrimaryButton } from '../components/PrimaryButton';
 import {
@@ -120,9 +121,12 @@ export const AddExerciseToSessionScreen: React.FC<Props> = ({ navigation }) => {
           const list = EXERCISES.filter((e) => e.muscleGroup === mg.id);
           return (
             <View key={mg.id} style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                {mg.emoji} {t(`muscle.${mg.id}`)}
-              </Text>
+              <MuscleLabel
+                mgId={mg.id}
+                size={18}
+                textStyle={styles.sectionTitle}
+                style={{ marginBottom: spacing.sm }}
+              />
               {list.map((ex) => {
                 const inSession = alreadyIn.has(ex.id);
                 return (

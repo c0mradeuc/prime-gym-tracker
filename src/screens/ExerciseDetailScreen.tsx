@@ -12,6 +12,7 @@ import {
 import { LineChart } from 'react-native-chart-kit';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { InfoButton } from '../components/InfoButton';
+import { MuscleLabel } from '../components/MuscleLabel';
 import { exerciseById, muscleGroupById } from '../data/catalog';
 import { RootStackParamList } from '../navigation';
 import { useStatsStore } from '../store/statsStore';
@@ -112,10 +113,21 @@ export const ExerciseDetailScreen: React.FC<Props> = ({ route }) => {
     <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.title}>{t(`exercise.${ex.id}`)}</Text>
-        <Text style={styles.subtitle}>
-          {mg ? `${mg.emoji} ${t(`muscle.${mg.id}`)} · ` : ''}
-          {t('exerciseDetail.sessionCount', { count: points.length })}
-        </Text>
+        <View style={styles.subtitleRow}>
+          {mg ? (
+            <>
+              <MuscleLabel
+                mgId={mg.id}
+                size={14}
+                textStyle={styles.subtitle}
+              />
+              <Text style={styles.subtitle}> · </Text>
+            </>
+          ) : null}
+          <Text style={styles.subtitle}>
+            {t('exerciseDetail.sessionCount', { count: points.length })}
+          </Text>
+        </View>
 
         {latestPr ? (
           <View style={styles.prCard}>
@@ -253,6 +265,10 @@ const styles = StyleSheet.create({
   subtitle: {
     color: colors.textMuted,
     fontSize: 13,
+  },
+  subtitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 2,
     marginBottom: spacing.lg,
   },

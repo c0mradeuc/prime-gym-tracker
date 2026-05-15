@@ -13,11 +13,12 @@ import {
   useFonts,
 } from '@expo-google-fonts/inter';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { BrandSplash } from './src/components/BrandSplash';
 import i18n from './src/i18n';
 import { RootStackParamList } from './src/navigation';
 import { useProfileStore } from './src/store/profileStore';
@@ -55,21 +56,33 @@ const navTheme: Theme = {
 export default function App() {
   const { t } = useTranslation();
   const language = useProfileStore((s) => s.language);
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontsError] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
     Inter_800ExtraBold,
   });
+  const [fontTimedOut, setFontTimedOut] = useState(false);
+  const [splashDone, setSplashDone] = useState(false);
   useEffect(() => {
     if (i18n.language !== language) {
       i18n.changeLanguage(language);
     }
   }, [language]);
+  useEffect(() => {
+    const t = setTimeout(() => setFontTimedOut(true), 3000);
+    return () => clearTimeout(t);
+  }, []);
 
-  if (!fontsLoaded) {
+  const fontsReady = fontsLoaded || !!fontsError || fontTimedOut;
+
+  if (!fontsReady) {
     return <View style={{ flex: 1, backgroundColor: colors.bg }} />;
+  }
+
+  if (!splashDone) {
+    return <BrandSplash onFinish={() => setSplashDone(true)} />;
   }
 
   return (

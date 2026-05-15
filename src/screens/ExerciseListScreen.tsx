@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MuscleLabel } from '../components/MuscleLabel';
 import { exerciseById, muscleGroupById } from '../data/catalog';
 import { RootStackParamList } from '../navigation';
 import { useStatsStore } from '../store/statsStore';
@@ -55,10 +56,21 @@ export const ExerciseListScreen: React.FC<Props> = ({ navigation }) => {
             >
               <View style={{ flex: 1 }}>
                 <Text style={styles.name}>{item.ex ? t(`exercise.${item.ex.id}`) : item.id}</Text>
-                <Text style={styles.sub}>
-                  {mg ? `${mg.emoji} ${t(`muscle.${mg.id}`)} · ` : ''}
-                  {t('exerciseList.sessionCount', { count: item.count })}
-                </Text>
+                <View style={styles.subRow}>
+                  {mg ? (
+                    <>
+                      <MuscleLabel
+                        mgId={mg.id}
+                        size={12}
+                        textStyle={styles.sub}
+                      />
+                      <Text style={styles.sub}> · </Text>
+                    </>
+                  ) : null}
+                  <Text style={styles.sub}>
+                    {t('exerciseList.sessionCount', { count: item.count })}
+                  </Text>
+                </View>
               </View>
               <Text style={styles.metric}>
                 {t('exerciseList.oneRm', { value: Math.round(item.latest.oneRm) })}
@@ -87,6 +99,7 @@ const styles = StyleSheet.create({
   },
   name: { color: colors.text, fontSize: 15, fontWeight: '700' },
   sub: { color: colors.textMuted, fontSize: 12, marginTop: 2 },
+  subRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
   metric: {
     color: colors.primary,
     fontWeight: '800',

@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { colors, radius, spacing } from '../theme';
+import { colors, fontFamily, radius, spacing } from '../theme';
 
 type Props = {
   value: number;
@@ -120,25 +120,29 @@ const styles = StyleSheet.create({
   btn: {
     backgroundColor: colors.surfaceAlt,
     borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: 6,
+    paddingVertical: 8,
     paddingHorizontal: 10,
-    minWidth: 36,
+    minWidth: 38,
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 2,
   },
   bigBtn: {
-    backgroundColor: 'rgba(79,140,255,0.15)',
-    borderColor: colors.primary,
-    minWidth: 44,
+    backgroundColor: colors.primarySoft,
+    minWidth: 48,
     paddingHorizontal: 8,
   },
-  btnText: { color: colors.text, fontWeight: '700', fontSize: 15 },
-  bigBtnText: { color: colors.primary, fontWeight: '800' },
+  btnText: {
+    color: colors.text,
+    fontFamily: fontFamily.bold,
+    fontSize: 15,
+  },
+  bigBtnText: {
+    color: colors.primary,
+    fontFamily: fontFamily.extrabold,
+  },
   valueBox: {
-    width: 90,
+    width: 94,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -153,16 +157,16 @@ const styles = StyleSheet.create({
     flex: 1,
     width: 0,
     color: colors.text,
+    fontFamily: fontFamily.bold,
     fontSize: 16,
-    fontWeight: '700',
     textAlign: 'center',
     paddingVertical: 0,
     outlineStyle: 'none' as any,
   },
   unit: {
     color: colors.textMuted,
+    fontFamily: fontFamily.semibold,
     fontSize: 12,
-    fontWeight: '600',
     marginLeft: 3,
   },
 });

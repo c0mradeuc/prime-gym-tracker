@@ -15,7 +15,8 @@ import {
 import { RootStackParamList } from '../navigation';
 import { useHistoryStore } from '../store/historyStore';
 import { useStatsStore } from '../store/statsStore';
-import { colors, radius, spacing } from '../theme';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, elevation, fontFamily, radius, spacing, type } from '../theme';
 import { formatDate } from '../utils/format';
 import { pickPrimaryLift } from '../utils/oneRm';
 import {
@@ -175,7 +176,11 @@ export const DashboardScreen: React.FC<Props> = ({ navigation }) => {
               <InfoButton title={INFO.summary.title} body={INFO.summary.body} />
             </View>
             <Pressable onPress={() => setSummaryOpen((v) => !v)} hitSlop={8}>
-              <Text style={styles.chevron}>{summaryOpen ? '▾' : '▸'}</Text>
+              <Ionicons
+                name={summaryOpen ? 'chevron-down' : 'chevron-forward'}
+                size={18}
+                color={colors.textMuted}
+              />
             </Pressable>
           </View>
           {summaryOpen ? (
@@ -301,11 +306,13 @@ export const DashboardScreen: React.FC<Props> = ({ navigation }) => {
         <View style={{ gap: spacing.sm, marginTop: spacing.md }}>
           <PrimaryButton
             label={t('dashboard.browseProgression')}
+            icon="trending-up"
             onPress={() => navigation.navigate('ExerciseList')}
           />
           <PrimaryButton
             label={t('dashboard.trainingHistory')}
             variant="secondary"
+            icon="time-outline"
             onPress={() => navigation.navigate('History')}
           />
         </View>
@@ -323,19 +330,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing.xl,
   },
-  emptyTitle: { color: colors.text, fontSize: 20, fontWeight: '800' },
+  emptyTitle: { ...type.h1 },
   emptySub: {
-    color: colors.textMuted,
+    ...type.bodyMuted,
     marginTop: spacing.sm,
     textAlign: 'center',
   },
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
     marginBottom: spacing.md,
     padding: spacing.md,
+    ...elevation(1),
   },
   cardHeader: {
     flexDirection: 'row',
@@ -348,8 +354,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
   },
-  cardTitle: { color: colors.text, fontSize: 16, fontWeight: '700' },
-  chevron: { color: colors.textMuted, fontSize: 16 },
+  cardTitle: {
+    ...type.bodyLg,
+    fontFamily: fontFamily.bold,
+  },
   sectionHead: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -358,12 +366,14 @@ const styles = StyleSheet.create({
   },
   cardBody: { marginTop: spacing.sm, gap: spacing.sm },
   sectionTitle: {
-    color: colors.text,
-    fontSize: 14,
-    fontWeight: '700',
+    ...type.body,
+    fontFamily: fontFamily.bold,
   },
-  summaryLine: { color: colors.text, fontSize: 14, fontWeight: '600' },
-  muted: { color: colors.textMuted, fontSize: 12 },
+  summaryLine: {
+    ...type.body,
+    fontFamily: fontFamily.semibold,
+  },
+  muted: { ...type.caption },
   deltaRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
   deltaChip: {
     backgroundColor: colors.surfaceAlt,
@@ -374,27 +384,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
-  deltaLabel: { color: colors.textMuted, fontSize: 11, fontWeight: '600' },
-  deltaPct: { fontSize: 12, fontWeight: '800' },
+  deltaLabel: {
+    color: colors.textMuted,
+    fontSize: 11,
+    fontFamily: fontFamily.semibold,
+  },
+  deltaPct: {
+    fontSize: 12,
+    fontFamily: fontFamily.extrabold,
+  },
   prsHeader: {
     color: colors.warning,
     fontSize: 13,
-    fontWeight: '800',
+    fontFamily: fontFamily.extrabold,
     marginTop: spacing.sm,
   },
-  prLine: { color: colors.text, fontSize: 12, marginTop: 2 },
+  prLine: {
+    ...type.caption,
+    color: colors.text,
+    marginTop: 2,
+  },
   tileRow: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm },
   lastRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: spacing.xs,
   },
-  lastLabel: { color: colors.text, fontSize: 14 },
-  lastDays: { color: colors.textMuted, fontSize: 13, fontWeight: '600' },
+  lastLabel: { ...type.body },
+  lastDays: {
+    color: colors.textMuted,
+    fontSize: 13,
+    fontFamily: fontFamily.semibold,
+  },
   deloadBanner: {
-    backgroundColor: 'rgba(244,183,64,0.12)',
-    borderColor: colors.warning,
-    borderWidth: 1,
+    backgroundColor: colors.warningSoft,
     borderRadius: radius.md,
     padding: spacing.md,
     marginBottom: spacing.md,
@@ -406,7 +429,7 @@ const styles = StyleSheet.create({
   deloadText: {
     color: colors.warning,
     fontSize: 13,
-    fontWeight: '700',
+    fontFamily: fontFamily.bold,
     flex: 1,
   },
 });

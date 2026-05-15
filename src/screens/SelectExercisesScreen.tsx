@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Chip } from '../components/Chip';
+import { MuscleLabel } from '../components/MuscleLabel';
 import { PrimaryButton } from '../components/PrimaryButton';
 import {
   exercisesByMuscleGroup,
@@ -43,9 +44,14 @@ export const SelectExercisesScreen: React.FC<Props> = ({ navigation }) => {
           const exercises = exercisesByMuscleGroup(mgId);
           return (
             <View key={mgId} style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                {mg?.emoji} {mg ? t(`muscle.${mg.id}`) : ''}
-              </Text>
+              {mg ? (
+                <MuscleLabel
+                  mgId={mg.id}
+                  size={18}
+                  textStyle={styles.sectionTitle}
+                  style={{ marginBottom: spacing.sm }}
+                />
+              ) : null}
               <View style={styles.chipsWrap}>
                 {exercises.map((ex) => (
                   <Chip

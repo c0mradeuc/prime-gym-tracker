@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { muscleGroupById } from '../data/catalog';
 import { RootStackParamList } from '../navigation';
 import { useHistoryStore } from '../store/historyStore';
-import { colors, radius, spacing } from '../theme';
+import { colors, elevation, fontFamily, radius, spacing, type } from '../theme';
 import { formatDate } from '../utils/format';
 import { sessionDurationMinutes, sessionVolume } from '../utils/volume';
 
@@ -77,27 +77,35 @@ export const HistoryScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   emptyWrap: { flexGrow: 1, justifyContent: 'center', padding: spacing.lg },
-  empty: { color: colors.textMuted, textAlign: 'center' },
+  empty: { ...type.body, color: colors.textMuted, textAlign: 'center' },
   row: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     padding: spacing.lg,
     marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...elevation(1),
   },
   rowHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  date: { color: colors.text, fontWeight: '700', fontSize: 16 },
-  time: { color: colors.textMuted, fontSize: 13 },
-  muscles: { color: colors.text, marginTop: spacing.xs, fontSize: 14 },
+  date: {
+    ...type.bodyLg,
+    fontFamily: fontFamily.bold,
+  },
+  time: { ...type.caption },
+  muscles: {
+    ...type.body,
+    marginTop: spacing.xs,
+  },
   metrics: {
     flexDirection: 'row',
     marginTop: spacing.sm,
     gap: spacing.md,
   },
-  metric: { color: colors.textMuted, fontSize: 12, fontWeight: '600' },
+  metric: {
+    ...type.caption,
+    fontFamily: fontFamily.semibold,
+  },
 });

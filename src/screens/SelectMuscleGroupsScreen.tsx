@@ -5,13 +5,29 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Chip } from '../components/Chip';
 import { PrimaryButton } from '../components/PrimaryButton';
-import { MUSCLE_GROUPS } from '../data/catalog';
+import { muscleGroupById } from '../data/catalog';
+import { MUSCLE_ICONS } from '../data/muscleIcons';
 import { RootStackParamList } from '../navigation';
 import { useDraftStore } from '../store/draftStore';
 import { useHistoryStore } from '../store/historyStore';
-import { colors, spacing } from '../theme';
+import { colors, spacing, type } from '../theme';
 import { MuscleGroupId } from '../types';
 import { daysSinceLastTrainedByGroup } from '../utils/stats';
+
+const MUSCLE_SECTIONS: { titleKey: string; groups: MuscleGroupId[] }[] = [
+  {
+    titleKey: 'builder.sectionBody',
+    groups: ['chest', 'back', 'shoulders', 'abs'],
+  },
+  {
+    titleKey: 'builder.sectionArms',
+    groups: ['biceps', 'triceps'],
+  },
+  {
+    titleKey: 'builder.sectionLegs',
+    groups: ['quads', 'hamstrings', 'glutes', 'calves'],
+  },
+];
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SelectMuscleGroups'>;
 
@@ -49,16 +65,35 @@ export const SelectMuscleGroupsScreen: React.FC<Props> = ({ navigation }) => {
             ? t('builder.muscleSubtitleRoutine')
             : t('builder.muscleSubtitleSession')}
         </Text>
-        <View style={styles.chipsWrap}>
-          {MUSCLE_GROUPS.map((mg) => (
-            <Chip
-              key={mg.id}
-              label={`${mg.emoji} ${t(`muscle.${mg.id}`)} ${formatDays(daysByGroup[mg.id])}`}
-              selected={selected.includes(mg.id)}
-              onPress={() => toggle(mg.id)}
-            />
-          ))}
-        </View>
+        {MUSCLE_SECTIONS.map((section) => (
+          <View key={section.titleKey} style={styles.section}>
+            <Text style={styles.sectionTitle}>{t(section.titleKey)}</Text>
+            <View style={styles.chipsWrap}>
+              {section.groups.map((id) => {
+                const mg = muscleGroupById(id);
+                if (!mg) return null;
+                const icon = MUSCLE_ICONS[mg.id];
+                const name = t(`muscle.${mg.id}`);
+                const label = icon
+                  ? mode === 'routine'
+                    ? name
+                    : `${name} ${formatDays(daysByGroup[mg.id])}`
+                  : mode === 'routine'
+                  ? `${mg.emoji} ${name}`
+                  : `${mg.emoji} ${name} ${formatDays(daysByGroup[mg.id])}`;
+                return (
+                  <Chip
+                    key={mg.id}
+                    label={label}
+                    iconSource={icon}
+                    selected={selected.includes(mg.id)}
+                    onPress={() => toggle(mg.id)}
+                  />
+                );
+              })}
+            </View>
+          </View>
+        ))}
       </ScrollView>
       <View style={styles.footer}>
         <PrimaryButton
@@ -74,18 +109,26 @@ export const SelectMuscleGroupsScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   scroll: { padding: spacing.lg, paddingBottom: spacing.xxl },
-  title: { color: colors.text, fontSize: 24, fontWeight: '800' },
+  title: {
+    ...type.display,
+    fontSize: 26,
+    lineHeight: 32,
+  },
   subtitle: {
-    color: colors.textMuted,
-    fontSize: 14,
+    ...type.bodyMuted,
     marginTop: spacing.xs,
     marginBottom: spacing.lg,
+  },
+  section: {
+    marginBottom: spacing.md,
+  },
+  sectionTitle: {
+    ...type.micro,
+    marginBottom: spacing.sm,
   },
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap' },
   footer: {
     padding: spacing.lg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
     backgroundColor: colors.bg,
   },
 });

@@ -3,6 +3,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Image,
   Modal,
   Platform,
   Pressable,
@@ -20,6 +21,8 @@ import { NumberStepper } from '../components/NumberStepper';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { SetRow } from '../components/SetRow';
 import { exerciseById, muscleGroupById } from '../data/catalog';
+import { MUSCLE_ICONS } from '../data/muscleIcons';
+import { MuscleLabel } from '../components/MuscleLabel';
 import { RootStackParamList } from '../navigation';
 import { useHistoryStore } from '../store/historyStore';
 import { useRoutineStore } from '../store/routineStore';
@@ -243,15 +246,19 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
           {session.muscleGroups.map((mgId) => {
             const mg = muscleGroupById(mgId);
             const mgName = mg ? t(`muscle.${mg.id}`) : mgId;
+            const icon = MUSCLE_ICONS[mgId];
             return (
               <Pressable
                 key={mgId}
                 onLongPress={() => askRemoveMuscleGroup(mgId, mgName)}
                 style={styles.muscleChip}
               >
-                <Text style={styles.muscleChipText}>
-                  {mg?.emoji} {mgName}
-                </Text>
+                {icon ? (
+                  <Image source={icon} style={styles.muscleChipIcon} resizeMode="contain" />
+                ) : (
+                  <Text style={styles.muscleChipText}>{mg?.emoji}</Text>
+                )}
+                <Text style={styles.muscleChipText}>{mgName}</Text>
               </Pressable>
             );
           })}
@@ -309,7 +316,7 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                   ]}
                 >
                   {allDone ? (
-                    <Ionicons name="checkmark" size={22} color="#0B0D11" />
+                    <Ionicons name="checkmark" size={22} color={colors.bg} />
                   ) : (
                     <Text style={styles.checkBubbleProgress}>
                       {done}/{total}
@@ -322,9 +329,14 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
                   style={styles.headerLabel}
                 >
                   <Text style={styles.cardTitle}>{t(`exercise.${ex.id}`)}</Text>
-                  <Text style={styles.cardSub}>
-                    {mg?.emoji} {mg ? t(`muscle.${mg.id}`) : ''}
-                  </Text>
+                  {mg ? (
+                    <MuscleLabel
+                      mgId={mg.id}
+                      size={12}
+                      textStyle={styles.cardSub}
+                      style={{ marginTop: 2 }}
+                    />
+                  ) : null}
                 </Pressable>
 
                 <Pressable
@@ -448,11 +460,18 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
 
         <PrimaryButton
           label={t('active.addExercise')}
-          variant="secondary"
+          variant="ghost"
+          icon="add-circle-outline"
           onPress={() => navigation.navigate('AddExerciseToSession')}
           style={{ marginTop: spacing.md }}
         />
         <Pressable onPress={onDiscard} style={styles.discardBtn}>
+          <Ionicons
+            name="close-circle-outline"
+            size={16}
+            color={colors.danger}
+            style={{ marginRight: 4 }}
+          />
           <Text style={styles.discardText}>{t('active.discardTraining')}</Text>
         </Pressable>
       </ScrollView>
@@ -461,6 +480,7 @@ export const ActiveWorkoutScreen: React.FC<Props> = ({ navigation }) => {
         <PrimaryButton
           label={t('active.completeTraining')}
           variant="success"
+          icon="checkmark-done"
           onPress={onComplete}
         />
       </View>
@@ -513,32 +533,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
     paddingBottom: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  timer: { color: colors.text, fontSize: 24, fontWeight: '800' },
-  progress: { color: colors.textMuted, fontSize: 14, fontWeight: '600' },
+  timer: {
+    ...type.display,
+    fontSize: 28,
+    lineHeight: 34,
+  },
+  progress: {
+    ...type.caption,
+    fontFamily: fontFamily.semibold,
+    color: colors.textMuted,
+  },
   muscleRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: spacing.sm,
   },
   muscleChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     backgroundColor: colors.surfaceAlt,
     borderRadius: radius.pill,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
+    paddingVertical: 6,
     marginRight: spacing.sm,
     marginTop: spacing.xs,
   },
-  muscleChipText: { color: colors.text, fontSize: 12, fontWeight: '600' },
+  muscleChipIcon: {
+    width: 16,
+    height: 16,
+  },
+  muscleChipText: {
+    ...type.caption,
+    color: colors.text,
+    fontFamily: fontFamily.semibold,
+  },
   scroll: { padding: spacing.lg, paddingBottom: spacing.xxl },
   empty: {
+    ...type.body,
     color: colors.textMuted,
     textAlign: 'center',
     marginVertical: spacing.xxl,
@@ -547,9 +585,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
     overflow: 'hidden',
+    ...elevation(1),
+  },
+  cardAllDone: {
+    backgroundColor: colors.successSoft,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -564,38 +604,37 @@ const styles = StyleSheet.create({
     marginRight: spacing.xs,
     ...(Platform.OS === 'web' ? { cursor: 'grab' as any } : {}),
   },
-  dragHandleText: {
-    color: colors.textMuted,
-    fontSize: 18,
-    fontWeight: '900',
-  },
   cardDragging: { opacity: 0.4 },
-  cardHover: { borderColor: colors.primary, borderWidth: 2 },
+  cardHover: { borderWidth: 2, borderColor: colors.primary },
   checkBubble: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkBubbleText: { color: '#fff', fontWeight: '900', fontSize: 18 },
   checkBubbleProgress: {
+    ...type.caption,
+    fontFamily: fontFamily.bold,
     color: colors.textMuted,
-    fontSize: 11,
-    fontWeight: '700',
   },
   headerLabel: { flex: 1, marginLeft: spacing.md },
-  cardTitle: { color: colors.text, fontSize: 16, fontWeight: '700' },
-  cardSub: { color: colors.textMuted, fontSize: 12, marginTop: 2 },
+  cardTitle: {
+    ...type.bodyLg,
+    fontFamily: fontFamily.bold,
+  },
+  cardSub: {
+    ...type.caption,
+    marginTop: 2,
+  },
   chevronBtn: { paddingHorizontal: spacing.sm },
-  chevron: { color: colors.textMuted, fontSize: 18 },
   cardBody: {
     paddingHorizontal: spacing.md,
     paddingBottom: spacing.md,
     paddingTop: spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: colors.borderSubtle,
   },
   cardFooter: {
     flexDirection: 'row',
@@ -604,58 +643,72 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   editLabel: {
-    color: colors.textMuted,
-    fontSize: 12,
-    textTransform: 'uppercase',
+    ...type.micro,
     marginBottom: spacing.xs,
   },
   addSetBtn: {
     flex: 1,
-    paddingVertical: spacing.sm,
+    flexDirection: 'row',
+    paddingVertical: spacing.sm + 2,
     alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderStyle: 'dashed',
+    backgroundColor: colors.primarySoft,
     marginRight: spacing.sm,
   },
-  addSetText: { color: colors.primary, fontWeight: '700' },
-  removeBtn: { paddingVertical: spacing.sm, paddingHorizontal: spacing.md },
-  removeBtnText: { color: colors.danger, fontWeight: '600', fontSize: 13 },
+  addSetText: {
+    ...type.body,
+    color: colors.primary,
+    fontFamily: fontFamily.bold,
+  },
+  removeBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  removeBtnText: {
+    ...type.caption,
+    color: colors.danger,
+    fontFamily: fontFamily.semibold,
+  },
   warmupToggle: {
     alignSelf: 'flex-start',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: 'transparent',
+    backgroundColor: colors.surfaceAlt,
   },
   warmupToggleOn: {
     backgroundColor: colors.warning,
-    borderColor: colors.warning,
   },
   warmupToggleText: {
+    ...type.body,
     color: colors.textMuted,
-    fontWeight: '700',
+    fontFamily: fontFamily.bold,
     fontSize: 13,
   },
   warmupToggleTextOn: { color: '#1A1D24' },
   discardBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
     alignSelf: 'center',
     marginTop: spacing.lg,
     padding: spacing.sm,
   },
-  discardText: { color: colors.danger, fontWeight: '600' },
+  discardText: {
+    ...type.body,
+    color: colors.danger,
+    fontFamily: fontFamily.semibold,
+  },
   footer: {
     padding: spacing.lg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    paddingTop: spacing.md,
     backgroundColor: colors.bg,
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: 'rgba(0,0,0,0.65)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing.lg,
@@ -665,14 +718,14 @@ const styles = StyleSheet.create({
     maxWidth: 420,
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
     padding: spacing.lg,
+    ...elevation(3),
   },
-  modalTitle: { color: colors.text, fontSize: 18, fontWeight: '800' },
+  modalTitle: {
+    ...type.h2,
+  },
   modalSub: {
-    color: colors.textMuted,
-    fontSize: 12,
+    ...type.caption,
     marginTop: spacing.xs,
     marginBottom: spacing.md,
   },
@@ -684,6 +737,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     color: colors.text,
+    fontFamily: fontFamily.medium,
     fontSize: 15,
   },
   modalActions: {
@@ -697,12 +751,20 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     borderRadius: radius.md,
   },
-  modalCancelText: { color: colors.textMuted, fontWeight: '700' },
+  modalCancelText: {
+    ...type.body,
+    color: colors.textMuted,
+    fontFamily: fontFamily.bold,
+  },
   modalSave: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: radius.md,
     backgroundColor: colors.primary,
   },
-  modalSaveText: { color: '#fff', fontWeight: '800' },
+  modalSaveText: {
+    ...type.body,
+    color: '#fff',
+    fontFamily: fontFamily.extrabold,
+  },
 });

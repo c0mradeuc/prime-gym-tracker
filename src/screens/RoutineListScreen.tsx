@@ -3,11 +3,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { exerciseById, muscleGroupById } from '../data/catalog';
+import { MuscleLabel } from '../components/MuscleLabel';
+import { exerciseById } from '../data/catalog';
 import { RootStackParamList } from '../navigation';
 import { useDraftStore } from '../store/draftStore';
 import { useRoutineStore } from '../store/routineStore';
-import { colors, radius, spacing } from '../theme';
+import { colors, elevation, fontFamily, radius, spacing, type } from '../theme';
 import { confirmAction } from '../utils/confirm';
 import { formatDate } from '../utils/format';
 
@@ -47,10 +48,6 @@ export const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
             .slice(0, 4)
             .map((e) => t(`exercise.${e.exerciseId}`));
           const remaining = item.exercises.length - exNames.length;
-          const muscles = item.muscleGroups
-            .map((m) => muscleGroupById(m)?.emoji)
-            .filter(Boolean)
-            .join(' ');
           return (
             <Pressable
               style={styles.row}
@@ -68,10 +65,14 @@ export const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
                   <Text style={styles.delete}>{t('routines.delete')}</Text>
                 </Pressable>
               </View>
+              <View style={styles.musclesRow}>
+                {item.muscleGroups.map((m) => (
+                  <MuscleLabel key={m} mgId={m} size={14} iconOnly />
+                ))}
+              </View>
               <Text style={styles.meta}>
-                {t('routines.meta', {
+                {t('routines.metaPlain', {
                   count: item.exercises.length,
-                  muscles,
                   date: formatDate(item.createdAt, 'MMM d'),
                 })}
               </Text>
@@ -90,22 +91,39 @@ export const RoutineListScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   emptyWrap: { flexGrow: 1, justifyContent: 'center', padding: spacing.lg },
-  empty: { color: colors.textMuted, textAlign: 'center' },
+  empty: { ...type.body, color: colors.textMuted, textAlign: 'center' },
   row: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     padding: spacing.lg,
     marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...elevation(1),
   },
   rowHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  name: { color: colors.text, fontWeight: '700', fontSize: 16 },
-  delete: { color: colors.danger, fontWeight: '600', fontSize: 12 },
-  meta: { color: colors.textMuted, fontSize: 12, marginTop: 2 },
-  exList: { color: colors.text, fontSize: 13, marginTop: spacing.sm },
+  name: {
+    ...type.bodyLg,
+    fontFamily: fontFamily.bold,
+  },
+  delete: {
+    color: colors.danger,
+    fontFamily: fontFamily.semibold,
+    fontSize: 12,
+  },
+  musclesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: spacing.xs,
+  },
+  meta: { ...type.caption, marginTop: 2 },
+  exList: {
+    ...type.body,
+    fontSize: 13,
+    marginTop: spacing.sm,
+  },
 });

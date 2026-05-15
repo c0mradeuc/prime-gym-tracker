@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import i18n, { Language, SUPPORTED_LANGUAGES } from '../i18n';
 import { RootStackParamList } from '../navigation';
 import { useProfileStore } from '../store/profileStore';
-import { colors, radius, spacing } from '../theme';
+import { colors, elevation, fontFamily, radius, spacing, type } from '../theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
@@ -207,32 +207,26 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   content: { padding: spacing.lg, gap: spacing.lg },
   intro: {
-    color: colors.textMuted,
-    fontSize: 14,
-    lineHeight: 20,
+    ...type.bodyMuted,
   },
   field: {
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: radius.lg,
     padding: spacing.md,
     gap: spacing.sm,
+    ...elevation(1),
   },
   label: {
+    ...type.micro,
     color: colors.text,
-    fontSize: 13,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    fontFamily: fontFamily.bold,
+    fontSize: 12,
   },
   input: {
     color: colors.text,
+    fontFamily: fontFamily.semibold,
     fontSize: 16,
-    fontWeight: '600',
     backgroundColor: colors.surfaceAlt,
-    borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
@@ -249,7 +243,7 @@ const styles = StyleSheet.create({
   unit: {
     color: colors.textMuted,
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: fontFamily.bold,
     minWidth: 44,
   },
   segmentRow: {
@@ -272,18 +266,16 @@ const styles = StyleSheet.create({
   segmentText: {
     color: colors.textMuted,
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: fontFamily.bold,
   },
   segmentTextActive: {
     color: '#fff',
   },
   hint: {
-    color: colors.textMuted,
-    fontSize: 12,
+    ...type.caption,
   },
   footer: {
-    color: colors.textMuted,
-    fontSize: 12,
+    ...type.caption,
     textAlign: 'center',
     marginTop: spacing.md,
   },

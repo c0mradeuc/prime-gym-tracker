@@ -1,7 +1,14 @@
-import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, radius, spacing } from '../theme';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+import { colors, fontFamily, radius, spacing, type } from '../theme';
 import { PrType, SetEntry } from '../types';
 
 type Props = {
@@ -31,26 +38,42 @@ export const SetRow: React.FC<Props> = ({
     reps: t('components.prReps'),
     volume: t('components.prVolume'),
   };
+
+  const checkScale = useSharedValue(set.done ? 1 : 0);
+  useEffect(() => {
+    checkScale.value = withSpring(set.done ? 1 : 0, {
+      damping: 12,
+      stiffness: 180,
+    });
+  }, [set.done, checkScale]);
+  const checkStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: checkScale.value }],
+    opacity: checkScale.value,
+  }));
+
+  const borderColor = prBadge
+    ? colors.warning
+    : expanded
+    ? colors.primary
+    : 'transparent';
+
   return (
-    <View
-      style={[
-        styles.wrap,
-        {
-          borderColor: prBadge
-            ? colors.warning
-            : expanded
-            ? colors.primary
-            : colors.border,
-        },
-      ]}
-    >
+    <View style={[styles.wrap, { borderColor }]}>
       <Pressable onPress={onPress} style={styles.row}>
         <Text style={styles.idx}>
           {set.warmup ? t('components.setWarmupShort') : `#${index + 1}`}
         </Text>
-        {set.warmup ? <View style={styles.warmupBadge}><Text style={styles.warmupBadgeText}>{t('components.setWarmupBadge')}</Text></View> : null}
+        {set.warmup ? (
+          <View style={styles.warmupBadge}>
+            <Ionicons name="flame" size={10} color="#1A1D24" />
+            <Text style={styles.warmupBadgeText}>
+              {t('components.setWarmupBadge')}
+            </Text>
+          </View>
+        ) : null}
         {prBadge ? (
           <View style={styles.prBadge}>
+            <Ionicons name="trophy" size={10} color={colors.warning} />
             <Text style={styles.prBadgeText}>{prLabel[prBadge]}</Text>
           </View>
         ) : null}
@@ -62,18 +85,30 @@ export const SetRow: React.FC<Props> = ({
         </Text>
         <Pressable
           onPress={onToggleDone}
+          hitSlop={6}
           style={[
             styles.check,
-            { backgroundColor: set.done ? colors.success : 'transparent' },
+            {
+              backgroundColor: set.done ? colors.success : 'transparent',
+              borderColor: set.done ? colors.success : colors.border,
+            },
           ]}
         >
-          <Text style={styles.checkText}>{set.done ? '✓' : ''}</Text>
+          <Animated.View style={checkStyle}>
+            <Ionicons name="checkmark" size={20} color={colors.bg} />
+          </Animated.View>
         </Pressable>
       </Pressable>
       {expanded ? (
         <View style={styles.editor}>
           {children}
           <Pressable onPress={onDelete} style={styles.deleteBtn}>
+            <Ionicons
+              name="trash-outline"
+              size={14}
+              color={colors.danger}
+              style={{ marginRight: 4 }}
+            />
             <Text style={styles.deleteText}>{t('components.deleteSet')}</Text>
           </Pressable>
         </View>
@@ -84,7 +119,7 @@ export const SetRow: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   wrap: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceAlt,
     borderRadius: radius.md,
     borderWidth: 1,
     marginBottom: spacing.sm,
@@ -97,11 +132,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   idx: {
+    ...type.body,
     color: colors.textMuted,
     width: 36,
-    fontWeight: '700',
+    fontFamily: fontFamily.bold,
   },
   warmupBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
     backgroundColor: colors.warning,
     borderRadius: radius.sm,
     paddingHorizontal: 6,
@@ -111,12 +150,15 @@ const styles = StyleSheet.create({
   warmupBadgeText: {
     color: '#1A1D24',
     fontSize: 10,
-    fontWeight: '800',
+    fontFamily: fontFamily.extrabold,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   prBadge: {
-    backgroundColor: 'rgba(244,183,64,0.18)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: colors.warningSoft,
     borderColor: colors.warning,
     borderWidth: 1,
     borderRadius: radius.sm,
@@ -127,34 +169,43 @@ const styles = StyleSheet.create({
   prBadgeText: {
     color: colors.warning,
     fontSize: 10,
-    fontWeight: '800',
+    fontFamily: fontFamily.extrabold,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
   },
   cell: {
     flex: 1,
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: '600',
+    ...type.bodyLg,
+    fontFamily: fontFamily.semibold,
   },
-  unit: { color: colors.textMuted, fontWeight: '400', fontSize: 13 },
+  unit: {
+    color: colors.textMuted,
+    fontFamily: fontFamily.regular,
+    fontSize: 13,
+  },
   check: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: colors.success,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkText: { color: '#fff', fontWeight: '900' },
   editor: {
     paddingHorizontal: spacing.md,
     paddingBottom: spacing.md,
     gap: spacing.md,
   },
   deleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
     alignSelf: 'flex-end',
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
   },
-  deleteText: { color: colors.danger, fontWeight: '600' },
+  deleteText: {
+    ...type.caption,
+    color: colors.danger,
+    fontFamily: fontFamily.semibold,
+  },
 });

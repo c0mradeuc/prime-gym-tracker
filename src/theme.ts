@@ -1,12 +1,12 @@
 import { Platform, TextStyle, ViewStyle } from 'react-native';
 
 export const colors = {
-  bg: '#0B0D11',
-  surface: '#161A22',
-  surfaceAlt: '#1F2430',
-  surfaceHi: '#262B38',
-  border: '#262B38',
-  borderSubtle: '#1F2430',
+  bg: '#110B0D',
+  surface: '#221C1F',
+  surfaceAlt: '#2E2629',
+  surfaceHi: '#3A3134',
+  border: '#3A3134',
+  borderSubtle: '#221C1F',
   text: '#F4F5F7',
   textMuted: '#8A93A6',
   textFaint: '#5C667A',

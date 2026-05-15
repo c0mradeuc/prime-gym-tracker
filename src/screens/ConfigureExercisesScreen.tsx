@@ -19,7 +19,7 @@ import { useDraftStore } from '../store/draftStore';
 import { useHistoryStore } from '../store/historyStore';
 import { useRoutineStore } from '../store/routineStore';
 import { useWorkoutStore } from '../store/workoutStore';
-import { colors, radius, spacing } from '../theme';
+import { colors, elevation, fontFamily, radius, spacing, type } from '../theme';
 import { SetRepScheme } from '../types';
 import { equipmentIncrement, suggestWeight } from '../utils/weight';
 
@@ -256,10 +256,13 @@ export const ConfigureExercisesScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   scroll: { padding: spacing.lg, paddingBottom: spacing.xxl },
-  title: { color: colors.text, fontSize: 24, fontWeight: '800' },
+  title: {
+    ...type.display,
+    fontSize: 26,
+    lineHeight: 32,
+  },
   subtitle: {
-    color: colors.textMuted,
-    fontSize: 14,
+    ...type.bodyMuted,
     marginTop: spacing.xs,
     marginBottom: spacing.lg,
   },
@@ -268,22 +271,17 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.lg,
     marginBottom: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...elevation(1),
   },
-  exName: { color: colors.text, fontSize: 18, fontWeight: '700' },
+  exName: { ...type.h2 },
   exMeta: {
-    color: colors.textMuted,
-    fontSize: 12,
+    ...type.caption,
     marginTop: 2,
     marginBottom: spacing.md,
     textTransform: 'capitalize',
   },
   sectionLabel: {
-    color: colors.textMuted,
-    fontSize: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    ...type.micro,
     marginTop: spacing.md,
     marginBottom: spacing.sm,
   },
@@ -300,22 +298,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: spacing.sm,
   },
-  schemeLabel: { color: colors.text, fontWeight: '700' },
+  schemeLabel: {
+    color: colors.text,
+    fontFamily: fontFamily.bold,
+    fontSize: 14,
+  },
   schemeSub: {
     color: colors.text,
     opacity: 0.85,
+    fontFamily: fontFamily.semibold,
     fontSize: 12,
     marginTop: 2,
   },
   footer: {
     padding: spacing.lg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
     backgroundColor: colors.bg,
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: 'rgba(0,0,0,0.65)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing.lg,
@@ -325,14 +326,12 @@ const styles = StyleSheet.create({
     maxWidth: 420,
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
     padding: spacing.lg,
+    ...elevation(3),
   },
-  modalTitle: { color: colors.text, fontSize: 18, fontWeight: '800' },
+  modalTitle: { ...type.h2 },
   modalSub: {
-    color: colors.textMuted,
-    fontSize: 12,
+    ...type.caption,
     marginTop: spacing.xs,
     marginBottom: spacing.md,
   },
@@ -344,6 +343,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     color: colors.text,
+    fontFamily: fontFamily.medium,
     fontSize: 15,
   },
   modalActions: {
@@ -357,12 +357,18 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     borderRadius: radius.md,
   },
-  modalCancelText: { color: colors.textMuted, fontWeight: '700' },
+  modalCancelText: {
+    color: colors.textMuted,
+    fontFamily: fontFamily.bold,
+  },
   modalSave: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: radius.md,
     backgroundColor: colors.primary,
   },
-  modalSaveText: { color: '#fff', fontWeight: '800' },
+  modalSaveText: {
+    color: '#fff',
+    fontFamily: fontFamily.extrabold,
+  },
 });

@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +11,7 @@ import { exerciseById, muscleGroupById } from '../data/catalog';
 import { RootStackParamList } from '../navigation';
 import { useHistoryStore } from '../store/historyStore';
 import { useStatsStore } from '../store/statsStore';
-import { colors, radius, spacing } from '../theme';
+import { colors, elevation, fontFamily, radius, spacing, type } from '../theme';
 import { ExerciseInSession, Session, SetEntry } from '../types';
 import { confirmAction } from '../utils/confirm';
 import { formatDate } from '../utils/format';
@@ -54,8 +55,14 @@ export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
               setEditing(true);
             }}
             hitSlop={8}
-            style={{ paddingHorizontal: spacing.sm }}
+            style={styles.headerActionWrap}
           >
+            <Ionicons
+              name="create-outline"
+              size={16}
+              color={colors.primary}
+              style={{ marginRight: 4 }}
+            />
             <Text style={styles.headerAction}>{t('session.edit')}</Text>
           </Pressable>
         ) : null,
@@ -216,6 +223,12 @@ export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
 
         {!editing ? (
           <Pressable onPress={onDelete} style={styles.deleteBtn}>
+            <Ionicons
+              name="trash-outline"
+              size={15}
+              color={colors.danger}
+              style={{ marginRight: 4 }}
+            />
             <Text style={styles.deleteText}>{t('session.deleteSession')}</Text>
           </Pressable>
         ) : null}
@@ -356,13 +369,23 @@ const EditableExerciseCard: React.FC<{
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   empty: {
+    ...type.body,
     color: colors.textMuted,
     textAlign: 'center',
     marginTop: spacing.xxl,
   },
   scroll: { padding: spacing.lg, paddingBottom: spacing.xxl },
-  date: { color: colors.text, fontSize: 18, fontWeight: '700' },
-  headerAction: { color: colors.primary, fontWeight: '700', fontSize: 15 },
+  date: { ...type.h2 },
+  headerActionWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.sm,
+  },
+  headerAction: {
+    color: colors.primary,
+    fontFamily: fontFamily.bold,
+    fontSize: 15,
+  },
   summaryRow: {
     flexDirection: 'row',
     marginTop: spacing.lg,
@@ -375,21 +398,19 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.md,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...elevation(1),
   },
-  summaryNum: { color: colors.text, fontWeight: '800', fontSize: 20 },
-  summaryLbl: { color: colors.textMuted, fontSize: 12, marginTop: 2 },
+  summaryNum: {
+    ...type.number,
+    fontSize: 22,
+  },
+  summaryLbl: { ...type.caption, marginTop: 2 },
   sectionTitle: {
-    color: colors.textMuted,
-    fontSize: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    ...type.micro,
     marginTop: spacing.md,
   },
   musclesText: {
-    color: colors.text,
-    fontSize: 15,
+    ...type.bodyLg,
     marginTop: spacing.xs,
     marginBottom: spacing.lg,
   },
@@ -398,13 +419,11 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.lg,
     marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    ...elevation(1),
   },
   exTitle: {
-    color: colors.text,
-    fontWeight: '700',
-    fontSize: 16,
+    ...type.bodyLg,
+    fontFamily: fontFamily.bold,
     marginBottom: spacing.sm,
   },
   editHeaderRow: {
@@ -413,46 +432,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   removeExerciseBtn: { paddingVertical: 4, paddingHorizontal: spacing.xs },
-  removeExerciseText: { color: colors.danger, fontWeight: '600', fontSize: 13 },
+  removeExerciseText: {
+    color: colors.danger,
+    fontFamily: fontFamily.semibold,
+    fontSize: 13,
+  },
   setRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: spacing.xs,
   },
-  setIdx: { color: colors.textMuted, width: 36, fontWeight: '600' },
-  setText: { color: colors.text, flex: 1, fontSize: 14 },
-  setStatus: { fontWeight: '800' },
-  editLabel: {
+  setIdx: {
     color: colors.textMuted,
-    fontSize: 12,
-    textTransform: 'uppercase',
-    marginBottom: spacing.xs,
+    fontFamily: fontFamily.semibold,
+    width: 36,
   },
+  setText: {
+    ...type.body,
+    flex: 1,
+  },
+  setStatus: { fontFamily: fontFamily.extrabold, fontSize: 16 },
+  editLabel: { ...type.micro, marginBottom: spacing.xs },
   warmupToggle: {
     alignSelf: 'flex-start',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: 'transparent',
+    backgroundColor: colors.surfaceAlt,
   },
   warmupToggleOn: {
     backgroundColor: colors.warning,
-    borderColor: colors.warning,
   },
   warmupToggleText: {
     color: colors.textMuted,
-    fontWeight: '700',
+    fontFamily: fontFamily.bold,
     fontSize: 13,
   },
   warmupToggleTextOn: { color: '#1A1D24' },
-  deleteBtn: { alignSelf: 'center', padding: spacing.md, marginTop: spacing.md },
-  deleteText: { color: colors.danger, fontWeight: '600' },
+  deleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    padding: spacing.md,
+    marginTop: spacing.md,
+  },
+  deleteText: {
+    color: colors.danger,
+    fontFamily: fontFamily.semibold,
+    fontSize: 14,
+  },
   footer: {
     padding: spacing.lg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
     backgroundColor: colors.bg,
   },
 });

@@ -24,7 +24,7 @@ const palette: Record<
   { bg: string; fg: string; border?: string }
 > = {
   primary: { bg: colors.primary, fg: '#fff' },
-  success: { bg: colors.success, fg: '#0B0D11' },
+  success: { bg: colors.success, fg: colors.bg },
   danger: { bg: colors.danger, fg: '#fff' },
   secondary: { bg: colors.surfaceAlt, fg: colors.text },
   ghost: { bg: 'transparent', fg: colors.primary, border: colors.primarySoftBorder },

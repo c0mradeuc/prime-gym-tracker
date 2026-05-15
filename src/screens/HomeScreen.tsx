@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { RootStackParamList } from '../navigation';
@@ -23,8 +23,13 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const title = name ? t('home.greetingNamed', { name }) : t('home.greetingDefault');
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom', 'left', 'right']}>
       <View style={styles.header}>
+        <Image
+          source={require('../../assets/brand-logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
       </View>
@@ -62,6 +67,8 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
           icon="stats-chart-outline"
           onPress={() => navigation.navigate('Dashboard')}
         />
+      </View>
+      <View style={styles.footer}>
         <PrimaryButton
           label={t('home.settings')}
           variant="ghost"
@@ -75,18 +82,26 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg, padding: spacing.lg },
-  header: { marginTop: spacing.xxl, marginBottom: spacing.xxl },
+  header: { marginTop: 0, marginBottom: spacing.xl, alignItems: 'center' },
+  logo: {
+    width: 320,
+    height: 143,
+    marginBottom: spacing.sm,
+  },
+  footer: { marginTop: 'auto' },
   title: {
     ...type.display,
-    fontSize: 34,
-    lineHeight: 40,
+    fontSize: 26,
+    lineHeight: 32,
     fontFamily: fontFamily.extrabold,
+    textAlign: 'center',
   },
   subtitle: {
     ...type.bodyMuted,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 20,
     marginTop: spacing.xs,
+    textAlign: 'center',
   },
   actions: { gap: spacing.md },
 });
