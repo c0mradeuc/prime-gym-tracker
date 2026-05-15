@@ -1,0 +1,59 @@
+{
+  "nav": {
+    "newTraining": "New training",
+    "routines": "Routines",
+    "muscleGroups": "Muscle groups",
+    "exercises": "Exercises",
+    "configure": "Configure",
+    "training": "Training",
+    "addExercise": "Add exercise",
+    "stats": "Stats",
+    "history": "History",
+    "session": "Session",
+    "progression": "Progression",
+    "settings": "Settings"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "remove": "Remove",
+    "add": "Add",
+    "confirm": "Confirm",
+    "done": "Done",
+    "edit": "Edit"
+  },
+  "home": {
+    "greetingDefault": "Gym Tracker",
+    "greetingNamed": "Hi, {{name}}",
+    "subtitle": "Stay strong. Log every set.",
+    "resumeTraining": "Resume training",
+    "createTraining": "Create new training",
+    "createRoutine": "Create Routine",
+    "viewStats": "View stats",
+    "settings": "Settings"
+  },
+  "settings": {
+    "intro": "Used to personalise the app and to estimate starting weights for bodyweight-ratio exercises (e.g. bench press).",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "age": "Age",
+    "height": "Height",
+    "bodyweight": "Bodyweight",
+    "language": "Language",
+    "languageEnglish": "English",
+    "languageSpanish": "Español",
+    "hintBodyweight": "Leave empty to use the default estimate (90 kg).",
+    "autosave": "Changes save automatically."
+  },
+  "units": {
+    "kg": "kg",
+    "cm": "cm",
+    "min": "min",
+    "vol": "vol",
+    "ex": "ex",
+    "sets": "sets",
+    "year_one": "year",
+    "year_other": "years"
+  }
+}

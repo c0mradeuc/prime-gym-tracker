@@ -1,0 +1,59 @@
+{
+  "nav": {
+    "newTraining": "Nuevo entrenamiento",
+    "routines": "Rutinas",
+    "muscleGroups": "Grupos musculares",
+    "exercises": "Ejercicios",
+    "configure": "Configurar",
+    "training": "Entrenamiento",
+    "addExercise": "Añadir ejercicio",
+    "stats": "Estadísticas",
+    "history": "Historial",
+    "session": "Sesión",
+    "progression": "Progresión",
+    "settings": "Ajustes"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "remove": "Quitar",
+    "add": "Añadir",
+    "confirm": "Confirmar",
+    "done": "Hecho",
+    "edit": "Editar"
+  },
+  "home": {
+    "greetingDefault": "Gym Tracker",
+    "greetingNamed": "Hola, {{name}}",
+    "subtitle": "Mantente fuerte. Registra cada serie.",
+    "resumeTraining": "Reanudar entrenamiento",
+    "createTraining": "Crear entrenamiento",
+    "createRoutine": "Crear rutina",
+    "viewStats": "Ver estadísticas",
+    "settings": "Ajustes"
+  },
+  "settings": {
+    "intro": "Se usan para personalizar la app y estimar pesos iniciales en ejercicios con ratio corporal (p. ej. press de banca).",
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "age": "Edad",
+    "height": "Altura",
+    "bodyweight": "Peso corporal",
+    "language": "Idioma",
+    "languageEnglish": "English",
+    "languageSpanish": "Español",
+    "hintBodyweight": "Déjalo vacío para usar la estimación por defecto (90 kg).",
+    "autosave": "Los cambios se guardan automáticamente."
+  },
+  "units": {
+    "kg": "kg",
+    "cm": "cm",
+    "min": "min",
+    "vol": "vol",
+    "ex": "ej",
+    "sets": "series",
+    "year_one": "año",
+    "year_other": "años"
+  }
+}
