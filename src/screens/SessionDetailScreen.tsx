@@ -184,6 +184,26 @@ export const SessionDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
         </View>
 
+        {editing ? (
+          <View style={styles.durationEdit}>
+            <Text style={styles.editLabel}>{t('session.duration')}</Text>
+            <NumberStepper
+              value={summary.duration}
+              onChange={(v) =>
+                updateDraft((s) => ({
+                  ...s,
+                  completedAt: s.startedAt + Math.max(1, Math.round(v)) * 60000,
+                }))
+              }
+              step={1}
+              bigStep={5}
+              min={1}
+              decimal={false}
+              unit={t('session.minutes')}
+            />
+          </View>
+        ) : null}
+
         <Text style={styles.sectionTitle}>{t('session.muscleGroups')}</Text>
         <Text style={styles.musclesText}>
           {view.muscleGroups
@@ -453,6 +473,13 @@ const styles = StyleSheet.create({
   },
   setStatus: { fontFamily: fontFamily.extrabold, fontSize: 16 },
   editLabel: { ...type.micro, marginBottom: spacing.xs },
+  durationEdit: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    ...elevation(1),
+  },
   warmupToggle: {
     alignSelf: 'flex-start',
     paddingHorizontal: spacing.md,

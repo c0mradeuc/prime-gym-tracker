@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { TrainingHeatmap } from '../components/TrainingHeatmap';
 import { muscleGroupById } from '../data/catalog';
 import { RootStackParamList } from '../navigation';
 import { useHistoryStore } from '../store/historyStore';
@@ -30,6 +31,7 @@ export const HistoryScreen: React.FC<Props> = ({ navigation }) => {
             ? styles.emptyWrap
             : { padding: spacing.lg, paddingBottom: spacing.xxl }
         }
+        ListHeaderComponent={data.length > 0 ? <TrainingHeatmap /> : null}
         ListEmptyComponent={
           <Text style={styles.empty}>{t('history.empty')}</Text>
         }

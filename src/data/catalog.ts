@@ -11,6 +11,7 @@ export const MUSCLE_GROUPS: MuscleGroup[] = [
   { id: 'glutes', name: 'Glutes', emoji: '🍑' },
   { id: 'calves', name: 'Calves', emoji: '🐐' },
   { id: 'abs', name: 'Abs', emoji: '🧱' },
+  { id: 'forearms', name: 'Forearms', emoji: '🤛' },
 ];
 
 const HYP_4x6 = { sets: 4, reps: 6, labelKey: 'hyp_4x6' };
@@ -85,6 +86,30 @@ export const EXERCISES: Exercise[] = [
     bwRatio: [{ reps: 10, ratio: 0.6 }, { reps: 12, ratio: 0.55 }, { reps: 15, ratio: 0.5 }],
     recommendedSchemes: ISOLATION,
   },
+  {
+    id: 'incline-bench-press',
+    name: 'Incline Bench Press',
+    muscleGroup: 'chest',
+    equipment: 'barbell',
+    bwRatio: [{ reps: 6, ratio: 0.75 }, { reps: 8, ratio: 0.65 }, { reps: 10, ratio: 0.6 }],
+    recommendedSchemes: COMPOUND_BARBELL,
+  },
+  {
+    id: 'machine-chest-press',
+    name: 'Machine Chest Press',
+    muscleGroup: 'chest',
+    equipment: 'machine',
+    bwRatio: [{ reps: 8, ratio: 0.8 }, { reps: 10, ratio: 0.7 }, { reps: 12, ratio: 0.6 }],
+    recommendedSchemes: ACCESSORY,
+  },
+  {
+    id: 'flat-db-press',
+    name: 'Flat DB Press',
+    muscleGroup: 'chest',
+    equipment: 'dumbbell',
+    bwRatio: [{ reps: 6, ratio: 0.35 }, { reps: 8, ratio: 0.32 }, { reps: 10, ratio: 0.28 }],
+    recommendedSchemes: ACCESSORY,
+  },
 
   // BACK
   {
@@ -142,6 +167,29 @@ export const EXERCISES: Exercise[] = [
     bwRatio: [{ reps: 8, ratio: 0.35 }, { reps: 10, ratio: 0.3 }, { reps: 12, ratio: 0.27 }],
     recommendedSchemes: ACCESSORY,
   },
+  {
+    id: 'chinup',
+    name: 'Chin-ups',
+    muscleGroup: 'back',
+    equipment: 'bodyweight',
+    recommendedSchemes: BODYWEIGHT_PUSH,
+  },
+  {
+    id: 'chest-supported-row',
+    name: 'Chest-Supported Row',
+    muscleGroup: 'back',
+    equipment: 'machine',
+    bwRatio: [{ reps: 8, ratio: 0.7 }, { reps: 10, ratio: 0.6 }, { reps: 12, ratio: 0.55 }],
+    recommendedSchemes: ACCESSORY,
+  },
+  {
+    id: 'shrugs',
+    name: 'Shrugs',
+    muscleGroup: 'back',
+    equipment: 'barbell',
+    bwRatio: [{ reps: 10, ratio: 0.9 }, { reps: 12, ratio: 0.8 }, { reps: 15, ratio: 0.7 }],
+    recommendedSchemes: ACCESSORY,
+  },
 
   // SHOULDERS
   {
@@ -192,6 +240,38 @@ export const EXERCISES: Exercise[] = [
     bwRatio: [{ reps: 10, ratio: 0.1 }, { reps: 12, ratio: 0.09 }, { reps: 15, ratio: 0.08 }],
     recommendedSchemes: ISOLATION,
   },
+  {
+    id: 'front-raise',
+    name: 'Front Raise',
+    muscleGroup: 'shoulders',
+    equipment: 'dumbbell',
+    bwRatio: [{ reps: 10, ratio: 0.1 }, { reps: 12, ratio: 0.09 }, { reps: 15, ratio: 0.08 }],
+    recommendedSchemes: ISOLATION,
+  },
+  {
+    id: 'cable-lateral-raise',
+    name: 'Cable Lateral Raise',
+    muscleGroup: 'shoulders',
+    equipment: 'cable',
+    bwRatio: [{ reps: 10, ratio: 0.12 }, { reps: 12, ratio: 0.1 }, { reps: 15, ratio: 0.08 }],
+    recommendedSchemes: ISOLATION,
+  },
+  {
+    id: 'machine-shoulder-press',
+    name: 'Machine Shoulder Press',
+    muscleGroup: 'shoulders',
+    equipment: 'machine',
+    bwRatio: [{ reps: 8, ratio: 0.45 }, { reps: 10, ratio: 0.4 }, { reps: 12, ratio: 0.35 }],
+    recommendedSchemes: ACCESSORY,
+  },
+  {
+    id: 'upright-row',
+    name: 'Upright Row',
+    muscleGroup: 'shoulders',
+    equipment: 'barbell',
+    bwRatio: [{ reps: 8, ratio: 0.45 }, { reps: 10, ratio: 0.4 }, { reps: 12, ratio: 0.35 }],
+    recommendedSchemes: ACCESSORY,
+  },
 
   // BICEPS
   {
@@ -234,6 +314,30 @@ export const EXERCISES: Exercise[] = [
     bwRatio: [{ reps: 8, ratio: 0.32 }, { reps: 10, ratio: 0.28 }, { reps: 12, ratio: 0.25 }],
     recommendedSchemes: ACCESSORY,
   },
+  {
+    id: 'db-curl',
+    name: 'DB Curl',
+    muscleGroup: 'biceps',
+    equipment: 'dumbbell',
+    bwRatio: [{ reps: 8, ratio: 0.18 }, { reps: 10, ratio: 0.16 }, { reps: 12, ratio: 0.14 }],
+    recommendedSchemes: ISOLATION,
+  },
+  {
+    id: 'concentration-curl',
+    name: 'Concentration Curl',
+    muscleGroup: 'biceps',
+    equipment: 'dumbbell',
+    bwRatio: [{ reps: 10, ratio: 0.16 }, { reps: 12, ratio: 0.14 }, { reps: 15, ratio: 0.12 }],
+    recommendedSchemes: ISOLATION,
+  },
+  {
+    id: 'ez-bar-curl',
+    name: 'EZ Bar Curl',
+    muscleGroup: 'biceps',
+    equipment: 'barbell',
+    bwRatio: [{ reps: 8, ratio: 0.38 }, { reps: 10, ratio: 0.33 }, { reps: 12, ratio: 0.28 }],
+    recommendedSchemes: ACCESSORY,
+  },
 
   // TRICEPS
   {
@@ -274,6 +378,29 @@ export const EXERCISES: Exercise[] = [
     muscleGroup: 'triceps',
     equipment: 'bodyweight',
     recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'bench-dip',
+    name: 'Bench Dips',
+    muscleGroup: 'triceps',
+    equipment: 'bodyweight',
+    recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'tricep-kickback',
+    name: 'Tricep Kickback',
+    muscleGroup: 'triceps',
+    equipment: 'dumbbell',
+    bwRatio: [{ reps: 10, ratio: 0.12 }, { reps: 12, ratio: 0.1 }, { reps: 15, ratio: 0.09 }],
+    recommendedSchemes: ISOLATION,
+  },
+  {
+    id: 'v-bar-pushdown',
+    name: 'V-Bar Pushdown',
+    muscleGroup: 'triceps',
+    equipment: 'cable',
+    bwRatio: [{ reps: 10, ratio: 0.42 }, { reps: 12, ratio: 0.37 }, { reps: 15, ratio: 0.32 }],
+    recommendedSchemes: ISOLATION,
   },
 
   // QUADS
@@ -325,6 +452,30 @@ export const EXERCISES: Exercise[] = [
     bwRatio: [{ reps: 8, ratio: 1.4 }, { reps: 10, ratio: 1.25 }, { reps: 12, ratio: 1.1 }],
     recommendedSchemes: ACCESSORY,
   },
+  {
+    id: 'walking-lunge',
+    name: 'Walking Lunges',
+    muscleGroup: 'quads',
+    equipment: 'dumbbell',
+    bwRatio: [{ reps: 10, ratio: 0.3 }, { reps: 12, ratio: 0.27 }, { reps: 15, ratio: 0.22 }],
+    recommendedSchemes: ACCESSORY,
+  },
+  {
+    id: 'goblet-squat',
+    name: 'Goblet Squat',
+    muscleGroup: 'quads',
+    equipment: 'dumbbell',
+    bwRatio: [{ reps: 8, ratio: 0.35 }, { reps: 10, ratio: 0.3 }, { reps: 12, ratio: 0.27 }],
+    recommendedSchemes: ACCESSORY,
+  },
+  {
+    id: 'smith-squat',
+    name: 'Smith Machine Squat',
+    muscleGroup: 'quads',
+    equipment: 'machine',
+    bwRatio: [{ reps: 6, ratio: 1.0 }, { reps: 8, ratio: 0.9 }, { reps: 10, ratio: 0.8 }],
+    recommendedSchemes: COMPOUND_BARBELL,
+  },
 
   // HAMSTRINGS
   {
@@ -366,6 +517,29 @@ export const EXERCISES: Exercise[] = [
     equipment: 'bodyweight',
     recommendedSchemes: BODYWEIGHT_PUSH,
   },
+  {
+    id: 'lying-leg-curl',
+    name: 'Lying Leg Curl',
+    muscleGroup: 'hamstrings',
+    equipment: 'machine',
+    bwRatio: [{ reps: 10, ratio: 0.45 }, { reps: 12, ratio: 0.4 }, { reps: 15, ratio: 0.35 }],
+    recommendedSchemes: ISOLATION,
+  },
+  {
+    id: 'single-leg-rdl',
+    name: 'Single-Leg RDL',
+    muscleGroup: 'hamstrings',
+    equipment: 'dumbbell',
+    bwRatio: [{ reps: 8, ratio: 0.3 }, { reps: 10, ratio: 0.27 }, { reps: 12, ratio: 0.24 }],
+    recommendedSchemes: ACCESSORY,
+  },
+  {
+    id: 'glute-ham-raise',
+    name: 'Glute-Ham Raise',
+    muscleGroup: 'hamstrings',
+    equipment: 'bodyweight',
+    recommendedSchemes: BODYWEIGHT_PUSH,
+  },
 
   // GLUTES
   {
@@ -398,6 +572,37 @@ export const EXERCISES: Exercise[] = [
     muscleGroup: 'glutes',
     equipment: 'machine',
     bwRatio: [{ reps: 12, ratio: 0.55 }, { reps: 15, ratio: 0.5 }, { reps: 20, ratio: 0.45 }],
+    recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'hip-adduction',
+    name: 'Hip Adduction',
+    muscleGroup: 'glutes',
+    equipment: 'machine',
+    bwRatio: [{ reps: 12, ratio: 0.55 }, { reps: 15, ratio: 0.5 }, { reps: 20, ratio: 0.45 }],
+    recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'sumo-deadlift',
+    name: 'Sumo Deadlift',
+    muscleGroup: 'glutes',
+    equipment: 'barbell',
+    bwRatio: [{ reps: 6, ratio: 1.3 }, { reps: 8, ratio: 1.15 }, { reps: 10, ratio: 1.0 }],
+    recommendedSchemes: COMPOUND_BARBELL,
+  },
+  {
+    id: 'reverse-lunge',
+    name: 'Reverse Lunge',
+    muscleGroup: 'glutes',
+    equipment: 'dumbbell',
+    bwRatio: [{ reps: 10, ratio: 0.28 }, { reps: 12, ratio: 0.25 }, { reps: 15, ratio: 0.22 }],
+    recommendedSchemes: ACCESSORY,
+  },
+  {
+    id: 'single-leg-hip-thrust',
+    name: 'Single-Leg Hip Thrust',
+    muscleGroup: 'glutes',
+    equipment: 'bodyweight',
     recommendedSchemes: HIGH_REP,
   },
   {
@@ -440,6 +645,14 @@ export const EXERCISES: Exercise[] = [
     muscleGroup: 'calves',
     equipment: 'dumbbell',
     bwRatio: [{ reps: 12, ratio: 0.25 }, { reps: 15, ratio: 0.22 }, { reps: 20, ratio: 0.18 }],
+    recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'leg-press-calf-raise',
+    name: 'Leg Press Calf Raise',
+    muscleGroup: 'calves',
+    equipment: 'machine',
+    bwRatio: [{ reps: 10, ratio: 1.5 }, { reps: 12, ratio: 1.35 }, { reps: 15, ratio: 1.2 }],
     recommendedSchemes: HIGH_REP,
   },
 
@@ -485,6 +698,84 @@ export const EXERCISES: Exercise[] = [
     muscleGroup: 'abs',
     equipment: 'bodyweight',
     recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'crunch',
+    name: 'Crunch',
+    muscleGroup: 'abs',
+    equipment: 'bodyweight',
+    recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'bicycle-crunch',
+    name: 'Bicycle Crunch',
+    muscleGroup: 'abs',
+    equipment: 'bodyweight',
+    recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'side-plank',
+    name: 'Side Plank (sec)',
+    muscleGroup: 'abs',
+    equipment: 'bodyweight',
+    recommendedSchemes: [
+      { sets: 3, reps: 30, labelKey: 'hyp_3x30s' },
+      { sets: 3, reps: 45, labelKey: 'hyp_3x45s' },
+      { sets: 3, reps: 60, labelKey: 'hyp_3x60s' },
+      { sets: 3, reps: 90, labelKey: 'end_3x90s' },
+    ],
+  },
+  {
+    id: 'dead-bug',
+    name: 'Dead Bug',
+    muscleGroup: 'abs',
+    equipment: 'bodyweight',
+    recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'mountain-climber',
+    name: 'Mountain Climbers',
+    muscleGroup: 'abs',
+    equipment: 'bodyweight',
+    recommendedSchemes: HIGH_REP,
+  },
+
+  // FOREARMS
+  {
+    id: 'wrist-curl',
+    name: 'Wrist Curl',
+    muscleGroup: 'forearms',
+    equipment: 'barbell',
+    bwRatio: [{ reps: 12, ratio: 0.3 }, { reps: 15, ratio: 0.27 }, { reps: 20, ratio: 0.22 }],
+    recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'reverse-wrist-curl',
+    name: 'Reverse Wrist Curl',
+    muscleGroup: 'forearms',
+    equipment: 'barbell',
+    bwRatio: [{ reps: 12, ratio: 0.15 }, { reps: 15, ratio: 0.13 }, { reps: 20, ratio: 0.11 }],
+    recommendedSchemes: HIGH_REP,
+  },
+  {
+    id: 'reverse-curl',
+    name: 'Reverse Curl',
+    muscleGroup: 'forearms',
+    equipment: 'barbell',
+    bwRatio: [{ reps: 8, ratio: 0.3 }, { reps: 10, ratio: 0.27 }, { reps: 12, ratio: 0.24 }],
+    recommendedSchemes: ACCESSORY,
+  },
+  {
+    id: 'farmers-walk',
+    name: "Farmer's Walk",
+    muscleGroup: 'forearms',
+    equipment: 'dumbbell',
+    bwRatio: [{ reps: 1, ratio: 0.5 }],
+    recommendedSchemes: [
+      { sets: 3, reps: 30, labelKey: 'hyp_3x30s' },
+      { sets: 3, reps: 45, labelKey: 'hyp_3x45s' },
+      { sets: 3, reps: 60, labelKey: 'hyp_3x60s' },
+    ],
   },
 ];
 

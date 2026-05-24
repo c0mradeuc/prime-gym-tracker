@@ -20,7 +20,7 @@ export const MUSCLE_GROUP_TO_CATEGORY: Partial<
   hamstrings: 'legs',
   glutes: 'legs',
   calves: 'legs',
-  // abs intentionally omitted — not part of the 5-category dashboard view
+  // abs and forearms intentionally omitted — not part of the 5-category dashboard view
 };
 
 export const MUSCLE_CATEGORY_LABEL: Record<MuscleCategory, string> = {

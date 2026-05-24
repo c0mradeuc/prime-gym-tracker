@@ -8,7 +8,8 @@ export type MuscleGroupId =
   | 'hamstrings'
   | 'glutes'
   | 'calves'
-  | 'abs';
+  | 'abs'
+  | 'forearms';
 
 export type MuscleGroup = {
   id: MuscleGroupId;

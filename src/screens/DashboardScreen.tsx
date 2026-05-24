@@ -56,10 +56,13 @@ export const DashboardScreen: React.FC<Props> = ({ navigation }) => {
   }, [processedCount, sessions, backfill]);
 
   const now = Date.now();
-  const thisWeekStart = useMemo(
+  const currentWeekStart = useMemo(
     () => startOfWeek(now, { weekStartsOn: 1 }).getTime(),
     [now],
   );
+  const [selectedWeekStart, setSelectedWeekStart] = useState(currentWeekStart);
+  const isCurrentWeek = selectedWeekStart === currentWeekStart;
+  const WEEK_MS = 7 * 86_400_000;
 
   const primaryLiftId = useMemo(
     () => pickPrimaryLift(oneRmHistory),
@@ -79,36 +82,36 @@ export const DashboardScreen: React.FC<Props> = ({ navigation }) => {
   }, [primaryLiftId, oneRmHistory]);
 
   const weekTotalVolume = useMemo(
-    () => weeklyTotalVolume(sessions, thisWeekStart),
-    [sessions, thisWeekStart],
+    () => weeklyTotalVolume(sessions, selectedWeekStart),
+    [sessions, selectedWeekStart],
   );
   const weekSessions = useMemo(
-    () => sessionsInWeek(sessions, thisWeekStart),
-    [sessions, thisWeekStart],
+    () => sessionsInWeek(sessions, selectedWeekStart),
+    [sessions, selectedWeekStart],
   );
   const weekPrs = useMemo(
     () =>
       prs.filter(
-        (p) => p.date >= thisWeekStart && p.date < thisWeekStart + 7 * 86_400_000,
+        (p) => p.date >= selectedWeekStart && p.date < selectedWeekStart + 7 * 86_400_000,
       ),
-    [prs, thisWeekStart],
+    [prs, selectedWeekStart],
   );
 
   const setsByCat = useMemo(
-    () => weeklySetsByCategory(sessions, thisWeekStart),
-    [sessions, thisWeekStart],
+    () => weeklySetsByCategory(sessions, selectedWeekStart),
+    [sessions, selectedWeekStart],
   );
   const wow = useMemo(
-    () => weekOverWeekByCategory(sessions, thisWeekStart),
-    [sessions, thisWeekStart],
+    () => weekOverWeekByCategory(sessions, selectedWeekStart),
+    [sessions, selectedWeekStart],
   );
   const daysSince = useMemo(
     () => daysSinceLastTrained(sessions, now),
     [sessions, now],
   );
   const deload = useMemo(
-    () => isDeloadWeek(sessions, thisWeekStart),
-    [sessions, thisWeekStart],
+    () => isDeloadWeek(sessions, selectedWeekStart),
+    [sessions, selectedWeekStart],
   );
 
   const [summaryOpen, setSummaryOpen] = useState(isMonday(now));
@@ -168,10 +171,34 @@ export const DashboardScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <View style={styles.headerLeft}>
-              <Pressable onPress={() => setSummaryOpen((v) => !v)}>
-                <Text style={styles.cardTitle}>
-                  {t('dashboard.weekOf', { date: formatDate(thisWeekStart, 'MMM d') })}
+              <Pressable
+                onPress={() => setSelectedWeekStart((w) => w - WEEK_MS)}
+                hitSlop={8}
+                style={styles.weekNavBtn}
+              >
+                <Ionicons name="chevron-back" size={18} color={colors.primary} />
+              </Pressable>
+              <Pressable onPress={() => setSummaryOpen((v) => !v)} style={{ flexShrink: 1 }}>
+                <Text style={styles.cardTitle} numberOfLines={1}>
+                  {isCurrentWeek
+                    ? t('dashboard.weekOf', { date: formatDate(selectedWeekStart, 'MMM d') })
+                    : t('dashboard.weekRange', {
+                        start: formatDate(selectedWeekStart, 'MMM d'),
+                        end: formatDate(selectedWeekStart + 6 * 86_400_000, 'MMM d'),
+                      })}
                 </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setSelectedWeekStart((w) => w + WEEK_MS)}
+                hitSlop={8}
+                disabled={isCurrentWeek}
+                style={[styles.weekNavBtn, isCurrentWeek && styles.weekNavBtnDisabled]}
+              >
+                <Ionicons
+                  name="chevron-forward"
+                  size={18}
+                  color={isCurrentWeek ? colors.textMuted : colors.primary}
+                />
               </Pressable>
               <InfoButton title={INFO.summary.title} body={INFO.summary.body} />
             </View>
@@ -183,6 +210,15 @@ export const DashboardScreen: React.FC<Props> = ({ navigation }) => {
               />
             </Pressable>
           </View>
+          {!isCurrentWeek ? (
+            <Pressable
+              onPress={() => setSelectedWeekStart(currentWeekStart)}
+              hitSlop={8}
+              style={styles.todayLink}
+            >
+              <Text style={styles.todayLinkText}>{t('dashboard.jumpToCurrent')}</Text>
+            </Pressable>
+          ) : null}
           {summaryOpen ? (
             <View style={styles.cardBody}>
               <Text style={styles.summaryLine}>
@@ -357,6 +393,20 @@ const styles = StyleSheet.create({
   cardTitle: {
     ...type.bodyLg,
     fontFamily: fontFamily.bold,
+  },
+  weekNavBtn: {
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+  },
+  weekNavBtnDisabled: { opacity: 0.4 },
+  todayLink: {
+    alignSelf: 'flex-start',
+    marginTop: spacing.xs,
+  },
+  todayLinkText: {
+    color: colors.primary,
+    fontSize: 12,
+    fontFamily: fontFamily.semibold,
   },
   sectionHead: {
     flexDirection: 'row',
