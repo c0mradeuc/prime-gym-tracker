@@ -48,13 +48,66 @@ npm start         # Expo dev server
 npm run android   # or ios / web
 ```
 
-Type-check:
+### Quality checks
 
 ```bash
-npx tsc --noEmit
+npm run typecheck    # tsc --noEmit
+npm run check:i18n   # ensure every t() key resolves in both en.json and es.json
 ```
 
 There is no test or lint script configured.
+
+## Builds & releases (EAS)
+
+EAS is configured in [`eas.json`](./eas.json) with three profiles. Production uses `appVersionSource: remote` + `autoIncrement: true`, so build numbers bump automatically.
+
+| Profile        | Distribution | Purpose                                                |
+| -------------- | ------------ | ------------------------------------------------------ |
+| `development`  | Internal     | Dev-client APK (pairs with `expo start --dev-client`)  |
+| `preview`      | Internal     | Installable APK / iOS link for testers                 |
+| `production`   | Store        | AAB / IPA, store-ready                                 |
+
+### Build a binary
+
+```bash
+npm run build:android            # production AAB
+npm run build:ios                # production IPA
+npm run build:preview:android    # internal APK
+npm run build:preview:ios        # internal iOS install link
+
+# dev client (one-off, no npm script):
+npx eas-cli build --profile development --platform android
+```
+
+### Submit to the stores
+
+```bash
+npm run submit:android   # Play Store
+npm run submit:ios       # App Store Connect
+```
+
+Store credentials must already be configured on the EAS side (Google service-account JSON / Apple App Store Connect API key).
+
+### OTA updates (push JS-only changes)
+
+`expo-updates` is wired with `runtimeVersion.policy: "appVersion"`, so an OTA reaches any installed client on the matching `appVersion`.
+
+```bash
+npm run ota          # production channel
+npm run ota:preview  # preview channel
+```
+
+Use OTA only for JS / asset changes. **Any native or dependency change requires a full rebuild.**
+
+### Useful EAS housekeeping
+
+```bash
+npx eas-cli login
+npx eas-cli whoami
+npx eas-cli build:list
+npx eas-cli update:list
+npx eas-cli credentials
+```
 
 ## Project layout
 

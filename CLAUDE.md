@@ -18,9 +18,20 @@ The three user-visible jobs the app is built around — plan a session, log sets
 
 ## Commands
 
+### Local dev
 - `npm start` — Expo dev server (Metro)
 - `npm run android` / `npm run ios` / `npm run web` — start on a specific target
-- `npx tsc --noEmit` — type-check (no `lint`/`test` scripts are configured)
+- `npm run typecheck` — `tsc --noEmit` (no `lint`/`test` scripts are configured)
+- `npm run check:i18n` — verify every `t('...')` key in `src/` resolves in both `en.json` and `es.json`; run after touching i18n strings
+
+### EAS (cloud builds + OTA)
+EAS is configured via `eas.json` with three profiles (`development`, `preview`, `production`). Production uses `appVersionSource: remote` + `autoIncrement: true`, so EAS bumps the build number on each production build.
+
+- `npm run build:android` / `npm run build:ios` — production build (AAB / IPA, store-ready)
+- `npm run build:preview:android` / `npm run build:preview:ios` — internal-distribution APK / install link
+- `npm run submit:android` / `npm run submit:ios` — submit the latest production build to the store
+- `npm run ota` / `npm run ota:preview` — push an OTA JS bundle to the matching channel (clients on the same `appVersion` runtime get it on next launch). Use only when you changed JS/assets — any native/dependency change requires a full rebuild.
+- Dev-client APK (one-off, no script): `npx eas-cli build --profile development --platform android`
 
 `react-native-reanimated/plugin` is loaded via `babel.config.js` and **must remain the last Babel plugin**. `metro.config.js` enables `unstable_enablePackageExports` with `['require', 'react-native']` condition names — needed for current dependency resolution; do not remove without checking that all native packages still resolve.
 
